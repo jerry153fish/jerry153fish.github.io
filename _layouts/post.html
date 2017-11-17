@@ -24,9 +24,9 @@ layout: blog-default
                     {% else %}
                         <meta itemprop="dateModified" content="{{ page.date | date_to_xmlschema }}">
                     {% endif %}
-                    <div class="article-license">
+                    <!-- <div class="article-license">
                         {% include blog/license.html %}
-                    </div>
+                    </div> -->
                 </footer>
                 {% if page.comment != false %}
                     <section>{% include utils/comment-disqus.html %}</section>

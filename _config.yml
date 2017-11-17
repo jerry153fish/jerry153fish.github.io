@@ -45,7 +45,7 @@ author:
 
 ## Comment system (Disqus) ##
 disqus:
-  # shortname:  #the Disqus shortname for the site
+  shortname:  jerry153fish-github-io
 
 ## Google Analytics ##
 # ga_tracking_id:  #Google analytics id for the site
@@ -59,7 +59,7 @@ leancloud:
 # mathjax: true
 
 ## Paginate ##
-paginate: 5
+paginate: 20
 paginate_path: /blog/page:num
 
 ## Post excerpts ##
