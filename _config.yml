@@ -1,0 +1,93 @@
+# Welcome to Jekyll!
+#
+# This config file is meant for settings that affect your whole blog, values
+# which you are expected to set up once and rarely need to edit after that.
+# For technical reasons, this file is *NOT* reloaded automatically when you use
+# 'jekyll serve'. If you change this file, please restart the server process.
+
+# ,--------.      ,--.   ,--. ,--.
+# '--.  .--',---.  \  `.'  /,-'  '-.
+#    |  |  | .-. :  .'    \ '-.  .-'
+#    |  |  \   --. /  .'.  \  |  |
+#    `--'   `----''--'   '--' `--'
+
+## Base settings ##
+# url:  # the base hostname & protocol for your site e.g. https://www.someone.com
+baseurl: '/'
+title: Jerry's blog
+description: > #this means to ignore newlines until "nav_lists:"
+  Jerry's Blog
+
+nav_lists:
+  - title: About
+    url: /about.html
+
+## GitHub repository (if the site is hosted by GitHub) ##
+# repository: e.g. someone.github.io
+# repository_tree: e.g. master
+
+## Language & timezone ##
+lang: en #the language of your site
+timezone: Australia/Hobart
+
+## Author & social ##
+author:
+  name: Jerry
+  email:  jerry153fish@gmail.com
+  # facebook:  #your Facebook username
+  # twitter:  #your Twitter username
+  github:  jerry153fish
+  # googleplus:  #your Google+ username
+  # weibo:  #your Weibo username
+  # douban:  #your Douban username
+  # linkedin:  #your Linkedin username
+  gitlab: jerry153fish
+
+## Comment system (Disqus) ##
+disqus:
+  # shortname:  #the Disqus shortname for the site
+
+## Google Analytics ##
+# ga_tracking_id:  #Google analytics id for the site
+
+## Reading quantity (LeanCloud) ##
+leancloud:
+  # app_id:  #LeanCloud App id
+  # app_key:  #LeanCloud App key
+  # app_class:  #LeanCloud App class
+
+# mathjax: true
+
+## Paginate ##
+paginate: 5
+paginate_path: /blog/page:num
+
+## Post excerpts ##
+excerpt_separator: <!--more-->
+excerpt_type: text ## text | html
+
+## Build ##
+markdown: kramdown
+highlighter: rouge
+permalink: date
+
+exclude:
+  - CHECKLIST.md
+  - README.md
+  - LICENSE
+  - /docs
+  - /screenshots
+  - /test
+
+## Plugins ##
+gems:
+  - jekyll-sitemap
+  - jekyll-feed
+  - jekyll-paginate
+  - jemoji
+
+## Server ##
+server_url: "0.0.0.0"
+
+## Development ##
+isdebug: false
