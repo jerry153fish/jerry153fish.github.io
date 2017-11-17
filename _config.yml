@@ -71,6 +71,12 @@ markdown: kramdown
 highlighter: rouge
 permalink: date
 
+defaults:
+  - scope:
+      path: "assets/img"
+    values:
+      image: true
+
 exclude:
   - CHECKLIST.md
   - README.md
