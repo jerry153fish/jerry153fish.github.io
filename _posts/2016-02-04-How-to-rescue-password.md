@@ -1,40 +1,54 @@
 ---
 layout: post
-title: How to rescue password 
+title: How To Rescue Password 
 key: 20160204
 tags: linux password rhcsa
 comment: true
 ---
 
-#### 1. press 3 before grub
+### Step one
 
-#### 2. Then, go to the kernel line (the line starting with linux16) and add the following statements at the end:
+> press 3 before grub
+
+### Step two
+
+> Then, go to the kernel line (the line starting with linux16) and add the following statements at the end:
 
 ```
 rd.break enforcing=0
 ```
 
-#### 3. remount the sysroot as writable
+### Step three
+
+> remount the sysroot as writable
 
 ```
 mount -o remount,rw /sysroot
 ```
 
-#### 4. change root directory
+### Step four
+
+> change root directory
 
 ```
 chroot /sysroot
 ```
 
-#### 5. reset password of certain user
+### Step five
+
+> reset password of certain user
 
 ```
 passwd some-user
 ```
 
-#### 6. exit
+### Step six
 
-#### 7. login with new password and save all changes
+>exit
+
+### Step seven
+
+> login with new password and save all changes
 
 ```
 restorecon /etc/shadow

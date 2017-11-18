@@ -1,11 +1,12 @@
 ---
 layout: post
-title: Linux reboot and shutdown
+title: Linux Reboot and Shutdown
 key: 20160202
 tags: linux rhcsa reboot shutdown
 comment: true
 ---
-####  reboot the system
+###  Reboot the system
+
 ```
 reboot
 systemctl reboot
@@ -14,7 +15,8 @@ init 6
 telinit 6
 ```
 
-#### shutdown
+### Shutdown
+
 ```
 halt
 sytemctl halt
@@ -23,25 +25,27 @@ init 0
 telinit 0
 ```
 
-#### poweroff
+### Poweroff
+
 ```
 poweroff
 systemctl poweroff
 ```
 
-#### suspend
+### Suspend
 
 ```
 systemctl suspend
 ```
 
-#### hibernation and suspend
+### Hibernation and suspend
 
 ```
 systemctl supend
 ```
 
-#### boot system manually
+### Boot system manually
+
 The default run level was set in the /etc/inittab file.
 
 1. single: maintenance level,
@@ -51,11 +55,12 @@ The default run level was set in the /etc/inittab file.
 
 
 To get the current run level with the old way, type:
+
 ```
 runlevel
 ```
 
-new *Systemd*, new commands are available:
+### Other 
 
 1. systemctl rescue: to move to single user  mode/maintenance level with mounted local file systems,
 2. systemctl emergency: to move to single user mode/maintenance with only /root mounted file system,

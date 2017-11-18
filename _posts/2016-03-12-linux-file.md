@@ -1,20 +1,21 @@
 ---
 layout: post
-title: Linux File Part one 
+title: Linux File
 key: 20160312
 tags: linux file C I/O
 ---
 
-#### almost everything in linux is file
+### Introduction
 
-1.Almost everything in Posix is handled through a file descriptor
-file descriptors: These are small integers that you can use to access open files or devices.
+> Almost everything in Posix is handled through a file descriptor
+
+File descriptors: These are small integers that you can use to access open files or devices.
 
 Programs can use disk files, serial ports, printers and other devices in exactly the same way as they would use a file: open, close, read, write and ioctl.
+
 ![file descriptor](https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/File_table_and_inode_table.svg/460px-File_table_and_inode_table.svg.png)
 
-2.Each Unix process (except perhaps a daemon) should expect to have three standard POSIX file descriptors, corresponding to the three standard streams.***The file descriptors that are automatically opened, however, already allow us to create some
-simple programs using write.***
+> Each Unix process (except perhaps a daemon) should expect to have three standard POSIX file descriptors, corresponding to the three standard streams. *The file descriptors that are automatically opened, however, already allow us to create some simple programs using write.*
 
 |Integer value|feilds|
 |---|---|
@@ -23,21 +24,21 @@ simple programs using write.***
 |2|standard error|
 
 
-#### write
+### write
 
 ```
 #include <unistd.h>
 size_t write(int fildes, const void *buf, size_t nbytes);
 ```
 
-#### read
+### read
 
 ```
 #include <unistd.h>
 size_t read(int fildes, void *buf, size_t nbytes);
 ```
 
-#### open
+### open
 
 To create a new file descriptor we need to use the open system call.
 
@@ -49,16 +50,11 @@ int open(const char *path, int oflags);
 int open(const char *path, int oflags, mode_t mode);
 ```
 
-Note Strictly speaking, we don't need to include sys/types.h and sys/stat.h to use open on POSIX systems, but
-they may be necessary on some UNIX systems.
+>Note Strictly speaking, we don't need to include sys/types.h and sys/stat.h to use open on POSIX systems, but they may be necessary on some UNIX systems.
 
-If two programs have a file open at the same time, they maintain distinct
-file descriptors. If they both write to the file, they will continue to write where they left off. Their data isn't
-interleaved, but one will overwrite the other. Each keeps its own idea of how far into the file (the offset) it has
-read or written.
+> If two programs have a file open at the same time, they maintain distinct file descriptors. If they both write to the file, they will continue to write where they left off. Their data isn't interleaved, but one will overwrite the other. Each keeps its own idea of how far into the file (the offset) it has read or written.
 
-The name of the file or device to be opened is passed as a parameter, path, and the oflags parameter is used to
-specify actions to be taken on opening the file.
+> The name of the file or device to be opened is passed as a parameter, path, and the oflags parameter is used to specify actions to be taken on opening the file.
 
 The oflags are specified as a bitwise OR of a mandatory file access mode and other optional modes. The open
 call must specify one of the following file access modes:
@@ -84,7 +80,7 @@ parameter:
 
 open returns the new file descriptor (always a non−negative integer) if successful, or −1 if it fails, when open also sets the global variable errno to indicate the reason for the failure. The new file descriptor is always the lowest numbered unused descriptor, a feature that can be quite useful in some circumstances.
 
-#### Initial Permissions
+### Initial Permissions
 
 When we create a file using the O_CREAT flag with open, we must use the three parameter form. mode, the
 third parameter, is made from a bitwise OR of the flags defined in the header file sys/stat.h.
@@ -108,7 +104,7 @@ open ("myfile", O_CREAT, S_IRUSR|S_IXOTH);
 string must be “”, char ''
 
 
-#### close
+### close
 
 ```
 #include <unistd.h>
@@ -117,7 +113,7 @@ int close(int fildes);
 It returns 0 if successful and −1 on error.
 
 
-#### standard IO
+### standard IO
 
 With that said, some things in Posix, and in particular, in Linux, are definitely not files.
 

@@ -23,8 +23,8 @@ nav_lists:
     url: /about.html
 
 ## GitHub repository (if the site is hosted by GitHub) ##
-# repository: e.g. someone.github.io
-# repository_tree: e.g. master
+repository: jerry153fish.github.io
+repository_tree: master
 
 ## Language & timezone ##
 lang: en #the language of your site
