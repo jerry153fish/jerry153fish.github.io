@@ -72,3 +72,4 @@ The ioctl system call is used to provide some necessary hardware−specific cont
 
 - file default:666
 - direction default:777
+

@@ -1,88 +1,113 @@
 ---
 layout: post
 title: ES6 Variable - ES6 Study
-key:   20161010
+key:   20161011
 categories: website
 tags: es6 variable study note
 comment: true
 ---
-### Preparation
 
-- Must have a domain name first
+### block level variable
 
-### Zoho features
+```
+{
+  let a = 10;
+  var b = 1;
+}
 
-- 10 free accounts per domain ( possible get more )
+a // ReferenceError: a is not defined.
+b // 1
+```
 
-- 5G for each accounts
+### No variable lift up
 
-- CRM, Project, Docs and other -- Free version of Google business
+```
+console.log(foo); // 输出undefined
+console.log(bar); // 报错ReferenceError
 
+var foo = 2;
+let bar = 2;
+```
 
-### Step one - register
+### variable blind in block temporal dead zone，aka TDZ
 
-Go to <a href="https://www.zoho.com/mail/" target="_blank">Zoho mail</a>
+```
+var tmp = 123;
 
-![zoho register](/assets/img/website/zoho-1.png)
+if (true) {
+  tmp = 'abc'; // ReferenceError
+  let tmp;
+}
+```
 
-Choose business email and select the free one
+### no repeative declaire
 
-![zoho register 2](/assets/img/website/zoho-2.png)
+```
+// error
+function () {
+  let a = 10;
+  var a = 1;
+}
 
-Fill the whole form and click sign up then you should see this  
+// error
+function () {
+  let a = 10;
+  let a = 1;
+}
+```
+### function declare
 
-![register successfully](/assets/img/website/zoho-3.png)
+- According to ES6, function declared inside block similar to let
 
+### let declared in global will not add to global
+```
+var a = 1;
+// in node，global.a
+// or this.a
+window.a // 1
 
-### Step two - setup
+let b = 1;
+window.b // undefined
+```
 
-Then you come to the setup steps
+### Destructuring
+```
+let [a, b, c] = [1, 2, 3]
+// a = 1 b = 2 c =3
 
-![zoho setup process](/assets/img/website/zoho-4-1.png)
+// right side must be an iterator
+```
 
-- Verify domain -- modify DNS record to prove you have the ownship of certain domain
+### Use shorthand in objet
 
-Open a new browser tab to your Domain DNS manage page of the registrar (eg godaddy),
+```
+const maxAge = 100
+const person = {
+    name: 'name',
+    age: 3,
+    // use this
+    maxAge,
+    // not this
+    badAge: maxAge,
+    // use this
+    getName () {
+        return this.name
+    }
+    // not use this
+    getAge: function () {
+        return this.age
+    }
+}
+```
 
-![DNS manage](/assets/img/website/godaddy-manage-two.png)
+### Spread
 
-You can choose CNAME or TXT method
-
-Copy the record
-
-![DNS manage](/assets/img/website/zoho-4.png)
-
-Add new CNAME record in the DNS zone
-
-![DNS manage](/assets/img/website/zoho-5.png)
-
-*Wait for sometime ( an hour ) to click CNAME lookup button on center buttom*
-
-![DNS manage](/assets/img/website/zoho-6-domain-verify.png)
-
-After the domain is verfied. You can choose add users or groups according to youself, or you can add them later.
-
-- add or edit mx record in DNS Zone
-
-Now you need to tell you domain that zoho is hosting your email services.
-
-Exactly same step as add CNAME record in the DNS zone. *If there were already mx records in the DNS, just edit them*.
-
-Copy record
-
-![DNS manage](/assets/img/website/zoho-7-mail-mx.png)
-
-Add or edit
-
-![DNS manage](/assets/img/website/godaddy-manage-mx.png)
-
-Again, you need to wait for a while unitll the changes take effect.
-
-![DNS manage](/assets/img/website/zoho-7-mail-mx-check.png)
-
-You can set or skip the following steps in terms of you needs.
-
-
-### Finally
-
-Done! You can can enter your business email now. You can test it by sending mails to your other accounts.
+```
+let jerry = { name: 'Jerry', age: '30' }
+// copy
+let anotherJerry = {...jerry}
+// change
+let yongerJerry = {...jerry, age: 16}
+// delete
+let {name, ...age} = jerry
+```
