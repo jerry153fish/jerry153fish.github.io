@@ -29,7 +29,7 @@ On ther other hand, object in javascript is simple and light. Some geninus came 
 eg:
 
 ```
-var element = {
+let element = {
   tagName: 'div',
   props: { 
     class: 'father',
