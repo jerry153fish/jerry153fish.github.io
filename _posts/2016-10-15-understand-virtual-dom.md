@@ -56,11 +56,54 @@ var element = {
 ```
 Then we come to step one:
 
-### Map js object to dom
+### Implementation
+
+> Step one define create element method
 
 ```
-class Element (tagName, props, children) {
+function createElement (tagName, props, children) {
+  this.tagName = tagName
+  this.props = props
+  this.children = children
+}
+```
+Then the example above could be represented as
 
+```
+let el = createElement('div', { class: 'father'}, [
+	createElement('div', { class: 'son'}, [
+		'1'
+	])
+	createElement('div', { class: 'grandson'}, [
+		'3'
+	])
+])
+```
+
+> render virtual dom into real
+
+```
+createElement.prototype.render = function () {
+	// create dom by tagmane
+  var el = document.createElement(this.tagName)
+  var props = this.props
+
+  for (var propName in props) {
+		// set dom attribute
+    var propValue = props[propName]
+    el.setAttribute(propName, propValue)
+  }
+
+  var children = this.children || []
+
+  children.forEach(function (child) {
+    var childEl = (child instanceof createElement) // check child is instance of createElement
+      ? child.render()
+      : document.createTextNode(child)
+    el.appendChild(childEl)
+  })
+
+  return el
 }
 ```
 
