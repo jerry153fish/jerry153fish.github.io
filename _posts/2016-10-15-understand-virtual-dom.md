@@ -60,7 +60,7 @@ Then we come to step one:
 
 > Step one define create element method
 
-```
+```javascript
 function createElement (tagName, props, children) {
   this.tagName = tagName
   this.props = props
@@ -69,27 +69,27 @@ function createElement (tagName, props, children) {
 ```
 Then the example above could be represented as
 
-```
+```javascript
 let el = createElement('div', { class: 'father'}, [
-	createElement('div', { class: 'son'}, [
-		'1'
-	])
-	createElement('div', { class: 'grandson'}, [
-		'3'
-	])
+    createElement('div', { class: 'son'}, [
+        '1'
+    ])
+    createElement('div', { class: 'grandson'}, [
+        '3'
+    ])
 ])
 ```
 
 > render virtual dom into real
 
-```
+```javascript
 createElement.prototype.render = function () {
-	// create dom by tagmane
+  // create dom by tagmane
   var el = document.createElement(this.tagName)
   var props = this.props
 
   for (var propName in props) {
-		// set dom attribute
+    // set dom attribute
     var propValue = props[propName]
     el.setAttribute(propName, propValue)
   }
