@@ -7,7 +7,7 @@ tags: regex
 
 ### Useful regex
 
-> check password must include number and upcase and lowcase no speical characters
+> check password must include number and uppercase and lowercase no special characters
 
 ```
 ^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,10}$
