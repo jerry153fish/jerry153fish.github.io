@@ -1,11 +1,9 @@
 ---
 layout: post
 title: ToyOS Development Journal - 1
-key: 20170701
-tags: c++ os assemble gas development journal
+key: 20171108
+tags: c++ os assemble GAS  development journal
 ---
-
-### Introduction
 
 This development journal collects my study notes when I develop toyOS following [Viktor Engelmann's writting your own operation system tutorial series](https://www.youtube.com/watch?v=AgeX-U4dKSs&index=6&list=PLHh55M_Kq4OApWScZyPl5HhgsTJS9MZ6M). 
 
@@ -29,7 +27,11 @@ sudo install xorriso # install newest version for iso file generating
 
 After the environment setting up, we need to review how an OS was booted up.
 
-### Pre-knowledge Boot Process
+### Pre-knowledge
+
+1. [ELF Format](https://jerry153fish.github.io/2017/10/11/ELF-format.html)
+
+2. System booting
 
 As we are writing operation system, we need to know what happened after the power key was pressed. The figure[^1] below demonstrate the main process of linux booting.
 
@@ -67,11 +69,6 @@ Then grub will load kernel into memory.
 5. init
 
 After the kernel loaded, init program will be executed.
-
-### Pre-knowledge ELF format
-
-ELF represents Executable and Linkable Format, which is a common standard file format for executable files, object code, shared libraries, and core dumps. It is a standard binary file format for Unix-like systems on x86 processors.[^5]
-
 
 ### Problem Define
 
@@ -142,7 +139,7 @@ In this task, there are two problems we need to deal with:
 
 
 ```s
-# boot.s for booting up kernel
+# load.s for booting up kernel
 # set compile variable 
 .set MAGIC, 0x1badb002
 .set FLAGS, (1<<0 | 1<<1)
@@ -157,14 +154,13 @@ In this task, there are two problems we need to deal with:
 ``` 
 
 2. Compile C++ to run in a naked PC
-    * setup global constructors and call them before main functions as we are going to use global objects and static objects
+
+* 2.1 setup global constructors and call them before main functions as we are going to use global objects and static objects
 
 > According to OS dev 2017[^4], global constructors have to be called before the main function. Destructors have to be executed after it returns. And GCC puts pointers to the constructors in one section called ".ctors" and pointers to the destructors in one section called ".dtors". 
 
-
-> Then we need to link assemble and c++ manually
-
-```linker.ld
+```ld
+// link.ld
 ENTRY(loader)
 OUTPUT_FORMAT(elf32-i386)
 OUTPUT_ARCH(i386:i386)
@@ -182,6 +178,7 @@ SECTIONS
 
     .data :
     {
+        // global constructors and destructors
         start_ctors = .;
         KEEP(*( .init_array ));
         KEEP(*(SORT_BY_INIT_PRIORITY( .init_array.* )));
@@ -203,12 +200,62 @@ SECTIONS
 
 ```
 
-> Makefile
+*Then we need add constructor init method in kenerl.cpp*
+
+```cpp
+// kenerl.cpp
+typedef void (*constructor)();
+extern "C" constructor start_ctors;
+extern "C" constructor end_ctors;
+extern "C" void callContructors () {
+    for(constructor* i = &start_ctors; i != &end_ctors; i++) {
+        (*i)();
+    }
+}
+```
+
+* 2.2 Finally, we can call cpp function from boot program
+
+```s
+# load.s
+
+# programs .text
+.section .text
+.extern toyMain
+.extern callContructors
+.global loader # main entry
+
+loader:
+    mov $kernal_stack, %esp # save stack top
+    call callContructors #init each constructure
+    push %eax # multiboot structure
+    push %ebx # magic number
+    call toyMain
+    
+_stop:
+    cli
+    hlt
+    jmp _stop
+
+.section .bss
+# 4 M stack 
+.space 4*1024*1024
+kernal_stack:
 
 ```
-# g++ should not using system default libs 
+
+#### Final Step
+
+1. Now we can configure Makefile to make grub configure files and compile codes together
+
+
+```
+# Makefile
+# g++ should not using system default libs for naked system
 GPPFLAGS = -m32 -fno-use-cxa-atexit -nostdlib -fno-builtin -fno-rtti -fno-exceptions -fno-leading-underscore
+# 32 assemble
 ASFLAGS = --32
+# elf format 
 LDFLAGS = -melf_i386
 OBJS = loader.o kernel.o
 
@@ -243,25 +290,17 @@ toyos.iso: toyKernel.bin
 # boot iso in qemu
 run: toyos.iso
 	qemu-system-i386 $<
-
-```
-
-
-#### Task 1
-
-> This task is simple we only need to configure grub.cfg file and use grub-mkrescue to write stage 1, stage2 , menu.lst and so on.
-
-```
-# /boot/grub/grub.cfg
-set timeout=0
-set default=0
-menuentry "Toy OS" {
-    multiboot /boot/toyKernel.bin
-        boot
-}
-
 ``` 
 
+### Conclusion
+
+At this stage, in order to print "Hello World" in a naked i386 32 bits system, we need at least:
+
+1. Configure grub 
+2. Put magic number in boot program
+3. Configure cpp and gas into elf_i386 and call each
+
+[Source code](https://gitlab.com/study-c/study-c-plus-plus/toyOS/tree/1699a91050af7e7612663e68c022677f13f1e007)
 
 
 ### Reference

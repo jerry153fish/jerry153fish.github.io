@@ -7,8 +7,6 @@ tags: flexbox flex css3
 comment: true
 ---
 
-### Why flex
-
 Flex enable containers to adust items' width/height/order to best fill the space in different kinds of screen sizes in a simple way.
 
 ### How to use

@@ -6,6 +6,8 @@ tags: linux password rhcsa
 comment: true
 ---
 
+This is a simple process of how to reset password in rhcsa test.
+
 ### Step one
 
 > press 3 before grub

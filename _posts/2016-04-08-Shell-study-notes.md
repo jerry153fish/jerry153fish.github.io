@@ -5,6 +5,8 @@ key: 20160408
 tags: shell linux bash
 ---
 
+Linux shell variables tutorial.
+
 ### Variable
 
 don't usually declare variables in the shell before we use them. Instead, we create them when we first use them get at the contents of a variable by preceding its name with a $ character and outputting its contents with the echo command

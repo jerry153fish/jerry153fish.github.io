@@ -5,6 +5,9 @@ key: 20160202
 tags: linux rhcsa reboot shutdown
 comment: true
 ---
+
+Simple system reboot and shutdown commands in linux.
+
 ###  Reboot the system
 
 ```

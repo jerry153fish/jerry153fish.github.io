@@ -7,8 +7,6 @@ tags: virtual dom mvvm
 comment: true
 ---
 
-### Introduction
-
 Why we need virtual dom? This is because dom is too heavy as it must implement at least those standards:
 
 - [HTMLElement - Web API Interfaces](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement)
@@ -56,7 +54,7 @@ let element = {
 ```
 Then we come to step one:
 
-### Implementation
+### Render
 
 > Step one define create element method
 
@@ -70,17 +68,17 @@ function createElement (tagName, props, children) {
 Then the example above could be represented as
 
 ```javascript
-let el = createElement('div', { class: 'father'}, [
-    createElement('div', { class: 'son'}, [
+let el = new createElement('div', { class: 'father'}, [
+    new createElement('div', { class: 'son'}, [
         '1'
-    ])
-    createElement('div', { class: 'grandson'}, [
+    ]),
+    new createElement('div', { class: 'grandson'}, [
         '3'
     ])
 ])
 ```
 
-> render virtual dom into real
+> render virtual dom into real DOM
 
 ```javascript
 createElement.prototype.render = function () {
@@ -106,4 +104,16 @@ createElement.prototype.render = function () {
   return el
 }
 ```
+
+Test:
+
+```js
+let root = el.render()
+document.body.append(root)
+``` 
+![virtual dom test](/assets/img/virtualDomTest.png)
+
+### Diff
+
+Now we know how to create the virtual dom. The diff algorithm turns out to be essential for virtual dom. This is because  
 

@@ -6,9 +6,13 @@ categories: website
 tags: domain email free zoho
 comment: true
 ---
+
+This article introduce how to set up a free business email in zoho.
+
 ### Preparation
 
 - Must have a domain name first
+- a phone number never apply zoho email before
 
 ### Zoho features
 

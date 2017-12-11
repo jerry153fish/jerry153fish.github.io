@@ -7,6 +7,8 @@ tags: es6 variable study note
 comment: true
 ---
 
+ES6 variable study notes.
+
 ### block level variable
 
 ```

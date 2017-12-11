@@ -5,8 +5,6 @@ key: 20160312
 tags: linux file C I/O
 ---
 
-### Introduction
-
 > Almost everything in Posix is handled through a file descriptor
 
 File descriptors: These are small integers that you can use to access open files or devices.

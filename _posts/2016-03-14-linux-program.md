@@ -5,8 +5,6 @@ key: 20160314
 tags: linux file C I/O
 ---
 
-### Introduction
-
 Applications under Linux / UNIX are represented by two special types of file: executables and scripts. Executable
 files are programs that can be run directly by the computer and correspond to DOS .exe files. Scripts are
 collections of instructions for another program, an interpreter, to follow. These correspond to DOS .bat files,

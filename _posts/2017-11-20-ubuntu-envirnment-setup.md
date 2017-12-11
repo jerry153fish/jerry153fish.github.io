@@ -5,7 +5,9 @@ key: 20171120
 tags: ubuntu i3 zsh vim bash linux
 ---
 
-### Preparement
+This article show how to setup a ubuntu development with i3, oh-my-zsh and spaceVim.
+
+### Preparation
 
 - Download [virtualbox](https://www.virtualbox.org/) if windows or mac
 - Download [Ubuntu](https://www.ubuntu.com/) and install it
