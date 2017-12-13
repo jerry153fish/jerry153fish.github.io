@@ -5,11 +5,11 @@ key: 20171109
 tags: c++ os journal memory segment
 ---
 
-This is second part of ToyOS development journal. In the [first part](), we successfully print "Hello World" in a naked i386 system. Now, let us move to memory management.
+This is second part of ToyOS development journal. In the [first part](https://jerry153fish.github.io/2017/11/08/ToyOS-development-journal-1.html), we successfully print "Hello World" in a naked i386 system. Now, let us move to memory management.
 
 ### Pre-knowledge
 
-Before we directly go to 32 bit, we need to learn how memory was handled in 8086. In [8086 Registers]() we know 8086 is 16 bits cpu whose ALU and registers are 16 bits. However, the address bus of 8086 is 20 bit -__-!. In other word, there is no way to access physical address (2^20 = 1M) with one register (2^16 = 64K).
+Before we directly jump to memory management of 32 bit, we need to learn how memory was handled in 8086. In [8086 Registers](https://jerry153fish.github.io/2016/01/01/8086-Registers.html) we know 8086 is 16 bits cpu whose ALU and registers are 16 bits. However, the address bus of 8086 is 20 bit -__-!. In other word, there is no way to access physical address (2^20 = 1M) with one register (2^16 = 64K).
 
 > According to Wiki 2017[^1], the 8086 shifts the 16-bit segment only four bits left before adding it to the 16-bit offset (16×segment + offset), therefore producing a 20-bit external (or effective or physical) address.
 
@@ -256,11 +256,11 @@ uint32_t GlobalDescriptorTable::SegmentDescriptor::Limit () {
 
 ```
 
-
-
 ### Conclusion
 
+In this tutorial, we set up our great descriptor table and load it into GDTR register. Now cpu could use it to manage memory. 
 
+Please find the [detailed code](https://gitlab.com/study-c/study-c-plus-plus/toyOS/tree/270dd8ac6d89062b7b0c74c8f5dfb141802b68cd)
 
 ### Reference
 

@@ -6,6 +6,8 @@ tags: design concept code-complete architecture
 comment: true
 ---
 
+Code Complete study notes.
+
 ### question-definition prerequisites
 
 - production vision
