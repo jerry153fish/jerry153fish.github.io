@@ -58,8 +58,10 @@ Github pages provide 1G space and 100G transfer per month for free.
 * create a repository in github 
     
     * your-github-name.github.io
-        * a 
-    * other name 
+    * any repository with gh-pages branch or master pages 
+
+* enable pages in settings
+
 
 ### Your house or office
 

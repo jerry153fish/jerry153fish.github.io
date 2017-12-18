@@ -92,7 +92,7 @@ Implement Great Descriptor Table (GDT) in c++
 There are three subtasks we need to achieve:
 
 * implement segment descriptor and its selector
-* implement great descriptor table and initialize necessary 
+* implement great descriptor table 
 * load GDT to GDTR 
 
 before we go to detailed solution, we need to define int types for future use.
@@ -162,6 +162,13 @@ In our implementation, we are going to using c++ classes define segment descript
             uint16_t CodeSegmentSelector();
             uint16_t DataSegmentSelector();
 
+        protected:
+            struct GreatDescriptorTablePointer
+                {
+                    uint16_t size;
+                    uint32_t base;
+                } __attribute__((packed)) gdt_pointer;
+
     };
 
 #endif
@@ -179,14 +186,11 @@ GlobalDescriptorTable::GlobalDescriptorTable ()
     codeSegmentSelector(0, 64*1024*1024, 0x9A),
     dataSegmentSelector(0, 64*1024*1024, 0x92)
 {
-    // we use 64 bits to store gdtr
-    uint32_t i[2];
-    // linear address of gdt
-    i[1] = (uint32_t)this;
-    // move sizeof gdt to higher 16 bits
-    i[0] = sizeof(GlobalDescriptorTable) << 16;
-    // skip the low 16 bits only load 48 bits
-    asm volatile("lgdt (%0)"::"p"(((uint8_t *) i) + 2));
+    // size
+    gdt_pointer.size  = sizeof(GlobalDescriptorTable);
+    // offset
+    gdt_pointer.base  = (uint32_t)this;
+    asm volatile("lgdt %0" : : "m" (gdt_pointer));
 }
 
 GlobalDescriptorTable::~GlobalDescriptorTable () {
@@ -261,6 +265,7 @@ uint32_t GlobalDescriptorTable::SegmentDescriptor::Limit () {
 In this tutorial, we set up our great descriptor table and load it into GDTR register. Now cpu could use it to manage memory. 
 
 Please find the [detailed code](https://gitlab.com/study-c/study-c-plus-plus/toyOS/tree/270dd8ac6d89062b7b0c74c8f5dfb141802b68cd)
+PS: Source code is not the latest version. Checkout develop branch to find the latest version. 
 
 ### Reference
 

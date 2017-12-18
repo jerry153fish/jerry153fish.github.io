@@ -20,8 +20,10 @@ ToyOS is a toy project for tutorial purpose. In this article, I will cover how t
 ```
 sudo apt update && sudo apt upgrade
 sudo apt install build-essential # building tools including g++ make and bintils which we are going to use
-sudo install qemu # emulator inside virtualbox 
-sudo install xorriso # install newest version for iso file generating
+sudo apt install qemu # emulator inside virtualbox 
+sudo apt install xorriso # install newest version for iso file generating
+# EFT boot system not using virtualbox or other virtual machine
+sudo apt install grub-pc-bin # if system use EFI to boot 
 
 ```
 
