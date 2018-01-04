@@ -33,7 +33,7 @@ There is no name mangling for C language. Thus we can call C function directly i
 test was defined in c file
 
 ```c
-void test() {
+void funcInC() {
     printf("test \n");
 }
 ```
@@ -41,16 +41,29 @@ void test() {
 it can be directly called in assemble code
 
 ```s
-.extern test
+.extern funcInC
 
 # some codes
 
-call test
+call funcInC
 
 # other
 ```
 
+![cmangle](/assets/img/mixedcands/cmangle.png)
+
 #### C++
+
+C++ name mangling following rules below:
+
+* Start with _Z
+* If nested add append N
+* Followed by numberOfCharsInNamespace and namespace if has namespace as well same rule of classes
+* Followed by parameter_names_encoded
+
+
+
+
 
 
 

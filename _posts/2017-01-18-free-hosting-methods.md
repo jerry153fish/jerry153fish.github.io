@@ -49,7 +49,7 @@ Firebase supports connecting to a custom domain after verifying ownership of dom
 
 ### Github pages
 
-Github pages is another static hosting service provided by github. Moreover, it integrated with Jekell for static and blog generation. 
+Github pages is another static hosting service provided by github. Moreover, it integrated with Jekyll for static and blog generation. 
 
 Github pages provide 1G space and 100G transfer per month for free.
 
@@ -61,12 +61,32 @@ Github pages provide 1G space and 100G transfer per month for free.
     * any repository with gh-pages branch or master pages 
 
 * enable pages in settings
-
+* connect to custom domain if necessary
+* push your static website or jekyll files to the repository
 
 ### Your house or office
 
-You can host any website at home or in your office. 
+You can host any website at home or in your office as long as there is internet connect. 
+
+#### Set up
+
+* You need to register a DDNS service so that your dynamic IP address can be blind to a fixed secondary domain.
+
+> According to Wiki[^2], Dynamic DNS (DDNS or DynDNS) is a method of automatically updating a name server in the Domain Name System (DNS), often in real time, with the active DDNS configuration of its configured hostnames, addresses or other information.
+
+    * highly recommended https://www.dynu.com
+
+* set up ddns on your router or computer
+    * set up router If your router have ddns service
+    * run ddns updating software on computer
+
+ 
+ * setup port forward and fixed ip to your target computer
+
+ * setup http servers on target computer
 
 ### Reference
 
 [^1]: Wiki 2017, *Fire base*, https://en.wikipedia.org/wiki/Firebase
+[^2]: Wiki 2017, *Dynamic DNS*, https://en.wikipedia.org/wiki/Dynamic_DNS
+
