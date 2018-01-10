@@ -61,12 +61,37 @@ C++ name mangling following rules below:
 * Followed by numberOfCharsInNamespace and namespace if has namespace as well same rule of classes
 * Followed by parameter_names_encoded
 
+eg:
+
+```cpp
+int func(int);
+float func(float, int);
+class Cfirst {
+    int func(int);
+    class Csecond {
+        int func(int);
+    };
+};
+
+namespace N {
+    class CNfirst {
+        int func(int);
+    };
+};
+```
+
+* int func(int) => _Z4funci
+* float func(int) => _Z4funcfi
+* int Cfirst::func(int) => _ZN6Cfirst4funcEi
+* int Cfirst::Csecond::func(int) => _ZN6Cfirst7Csecond4funcEi
+* int N::CNfirst::func(int) => _ZN1N7CNfirst4funcEi
+
+![cmangle](/assets/img/mixedcands/cnamemangle2.png)
 
 
+### Conclusion
 
-
-
-
+As long as knowing the mangled name in object code, we can directly call c/c++ function with mangled name in the assemble code.
 
 
 ### Reference
