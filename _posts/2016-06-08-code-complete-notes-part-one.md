@@ -76,3 +76,16 @@ Code Complete study notes.
 - Error Processing
 - Fault Tolerance
 
+### Good habits
+
+- modularization
+- unit test TDD
+- planning before coding
+- search before ask, ask questions
+- record everything after a task finished
+- do one thing and do it well
+- KISS, DRY
+- Single Level of Abstraction Principle
+- Always leave the code cleaner than you found it
+- Easy to read
+
