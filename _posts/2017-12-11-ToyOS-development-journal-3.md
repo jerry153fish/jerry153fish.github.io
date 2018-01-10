@@ -52,7 +52,7 @@ The picture above demonstrate the process when CPU capture an interrupt, we stil
 Chip | Purpose | I/O port
 ---|---|---
 Master PIC | Command | 0x0020
-Master PIC | Data | 	0x0021
+Master PIC | Data | 0x0021
 Slave PIC | Command | 0x00A0
 Slave PIC | Data | 0x00A1
 
@@ -258,6 +258,7 @@ struct GateDescriptor
     uint16_t codeSegmentSelectorOffset, void (*handler)(),
     uint8_t DescriptorPrivilegeLevel, uint8_t DescriptorType);
 ```
+
 * implement interrupt descriptor table
 
 * load to interrupt descriptor table register
@@ -304,6 +305,46 @@ struct GateDescriptor
             // unhandle interrupts
             static void InterruptIgnore();
 
+            // interrputs start from 0x20 - 32 for assemble entries
+            static void HandleInterruptRequest0x00();
+            static void HandleInterruptRequest0x01();
+            static void HandleInterruptRequest0x02();
+            static void HandleInterruptRequest0x03();
+            static void HandleInterruptRequest0x04();
+            static void HandleInterruptRequest0x05();
+            static void HandleInterruptRequest0x06();
+            static void HandleInterruptRequest0x07();
+            static void HandleInterruptRequest0x08();
+            static void HandleInterruptRequest0x09();
+            static void HandleInterruptRequest0x0A();
+            static void HandleInterruptRequest0x0B();
+            static void HandleInterruptRequest0x0C();
+            static void HandleInterruptRequest0x0D();
+            static void HandleInterruptRequest0x0E();
+            static void HandleInterruptRequest0x0F();
+            static void HandleInterruptRequest0x31();
+            // exceptions for assemble entries
+            static void HandleException0x00();
+            static void HandleException0x01();
+            static void HandleException0x02();
+            static void HandleException0x03();
+            static void HandleException0x04();
+            static void HandleException0x05();
+            static void HandleException0x06();
+            static void HandleException0x07();
+            static void HandleException0x08();
+            static void HandleException0x09();
+            static void HandleException0x0A();
+            static void HandleException0x0B();
+            static void HandleException0x0C();
+            static void HandleException0x0D();
+            static void HandleException0x0E();
+            static void HandleException0x0F();
+            static void HandleException0x10();
+            static void HandleException0x11();
+            static void HandleException0x12();
+            static void HandleException0x13();
+
 
             // real interrupt handle
             static uint32_t HandleInterrupt(uint8_t interrupt, uint32_t esp);
@@ -325,6 +366,8 @@ struct GateDescriptor
 
 ### Initialize PIC
 
+> According to OSdev [^3], when entering protected mode, the first command is needed to give the two PICs is the initialise command (code 0x11). Normally, IRQs 0 to 7 are mapped to entries 8 to 15. This is a problem in protected mode, because IDT entry 8 is a Double Fault. Without remapping, every time IRQ0 fires, we will get a Double Fault Exception, which is NOT actually what's happening. Thus we need to make IRQ0 to 15 be remapped to IDT entries 32 to 47 [^4]. Moreover the IRQ Controllers need to be told when they are done serve, so an "End of Interrupt" command (0x20) must be sent. If the second controller (an IRQ from 8 to 15) gets an interrupt, BOTH controllers need to be acknowleged otherwise, only need to tell the first controller. Or there is no IRQs raised
+
 ```cpp
    // initialize PIC
     programmableInterruptControllerMasterCommandPort.Write(0x11);
@@ -342,14 +385,136 @@ struct GateDescriptor
 
     programmableInterruptControllerMasterDataPort.Write(0x00);
     programmableInterruptControllerSlaveDataPort.Write(0x00);
+
+    // the code piece below should be placed in the interrupt handler when we finish dealing inrrupts 
+    // hardware interrupts must be acknowledged
+    if(hardwareInterruptOffset <= interrupt && interrupt < hardwareInterruptOffset+16)
+    {
+        programmableInterruptControllerMasterCommandPort.Write(0x20);
+        // slave pic
+        if(hardwareInterruptOffset + 8 <= interrupt)
+            programmableInterruptControllerSlaveCommandPort.Write(0x20);
+    }
 ```
 
 ### Snapshot and restore
 
+Before jumping into codes, check how [c/c++ mixed with assemble](). 
 
+```s
+# intruptshub.s
+# the first 32 interrupts for exception
+.set IRQ_BASE, 0x20
+
+.section .text
+# cpp static class method link name
+.extern _ZN16InterruptManager15HandleInterruptEhj
+
+# macro for generate exception entries in interrupts.h
+.macro HandleException num
+.global _ZN16InterruptManager19HandleException\num\()Ev
+_ZN16InterruptManager19HandleException\num\()Ev:
+    movb $\num, (interruptnumber)
+    jmp snapshot_restore
+.endm
+
+# macro for generate interrupts entries in interrupts.h
+.macro HandleInterruptRequest num
+.global _ZN16InterruptManager26HandleInterruptRequest\num\()Ev
+_ZN16InterruptManager26HandleInterruptRequest\num\()Ev:
+    movb $\num + IRQ_BASE, (interruptnumber)
+    jmp snapshot_restore
+.endm
+# exceptions
+HandleException 0x00
+HandleException 0x01
+HandleException 0x02
+HandleException 0x03
+HandleException 0x04
+HandleException 0x05
+HandleException 0x06
+HandleException 0x07
+HandleException 0x08
+HandleException 0x09
+HandleException 0x0A
+HandleException 0x0B
+HandleException 0x0C
+HandleException 0x0D
+HandleException 0x0E
+HandleException 0x0F
+HandleException 0x10
+HandleException 0x11
+HandleException 0x12
+HandleException 0x13
+# interrupts
+HandleInterruptRequest 0x00
+HandleInterruptRequest 0x01
+HandleInterruptRequest 0x02
+HandleInterruptRequest 0x03
+HandleInterruptRequest 0x04
+HandleInterruptRequest 0x05
+HandleInterruptRequest 0x06
+HandleInterruptRequest 0x07
+HandleInterruptRequest 0x08
+HandleInterruptRequest 0x09
+HandleInterruptRequest 0x0A
+HandleInterruptRequest 0x0B
+HandleInterruptRequest 0x0C
+HandleInterruptRequest 0x0D
+HandleInterruptRequest 0x0E
+HandleInterruptRequest 0x0F
+HandleInterruptRequest 0x31
+
+# interrput snapshot and restore
+snapshot_restore:
+
+    # register snapshot
+    pusha
+    # segment registers snapshot
+    pushl %ds
+    pushl %es
+    pushl %fs
+    pushl %gs
+
+    # interrupt handler
+    pushl %esp
+    push (interruptnumber)
+    call _ZN16InterruptManager15HandleInterruptEhj
+    add %esp, 6
+    mov %eax, %esp
+
+    # register restore
+    pop %gs
+    pop %fs
+    pop %es
+    pop %ds
+    popa
+
+.global _ZN16InterruptManager15InterruptIgnoreEv
+_ZN16InterruptManager15InterruptIgnoreEv:
+
+    iret
+
+
+.data
+    interruptnumber: .byte 0
+```
+
+### Conclusion
+
+Setting up interupts could be divided into three steps
+
+* Initialize IDT
+* Initialize PIC
+* Snapshot and restore
+
+[interrups](https://alex.dzyoba.com/img/interrupts.png)
+
+Not only need we to set up IDT table, but also must we set up static exceptions and interrupts entries. Then we need to initialize the two pics, there are three must-do here: initilize, remap and acknowledge in pic. When it comes spapshot and restore, we need to reserve the registers and segments before call real interrupt hander and restore them after handler called. Check [source code](https://gitlab.com/study-c/study-c-plus-plus/toyOS/tree/e096481911b7951643e107eedd0e84793a8938fd) for detailed code.
 
 ### Reference
 
 [^1]: Sakushi 2017, *8086 Interrupts*, http://www.sakshieducation.com/Story.aspx?nid=91090 
 [^2]: Intel 2017, *Intel® 64 and IA-32 Architectures Software Developer’s Manual*, https://www.intel.com/content/www/us/en/architecture-and-technology/64-ia-32-architectures-software-developer-vol-3a-part-1-manual.html
 [^3]: OSdev 2017, *8259 PIC*, http://wiki.osdev.org/8259_PIC
+[^4]: bkerndev 2017, *IRQs and PICs*, http://www.osdever.net/bkerndev/Docs/irqs.htm
