@@ -15,7 +15,7 @@ ToyOS is a toy project for tutorial purpose. In this article, I will cover how t
 > The first thing we should do is to set up development enironment and buinding tools.
 
 - [Install Ubuntu](https://jerry153fish.github.io/2017/11/20/ubuntu-envirnment-setup.html)
-- install building tools, emulator and other necessary packages
+- Install building tools, emulator and other necessary packages
 
 ```
 sudo apt update && sudo apt upgrade
