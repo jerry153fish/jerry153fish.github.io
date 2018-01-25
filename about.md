@@ -5,7 +5,16 @@ key: page-about
 ---
 ### About Me
 
-Hey, my name is Jerry Chen. Been an electronic engineer for 5 years, I am a full stack developer in a startup company [wherewot](https://wherewot.com) for last two years.
+```cpp
+
+class Developer {
+
+}
+```
+
+
+
+Been an electronic engineer for 5 years, I am a full stack developer in a startup company [wherewot](https://wherewot.com) for last two years.
 
 I was weaned as hardware engineer when I learned to assemble small electronic devices from magazines. After gaining my BA on Electronic Information Engineer, I became a happy electronic engineer. For some reasons, I came to Australia and purpose my second degree MA on Information Technology. It turns out career on software development give me more satisfaction and less pain. 
 

@@ -95,8 +95,7 @@ Will return vt10 with certain number > vt11
 
 ### Small table join big table
 
-According to my view, this is ultimate goal of optimization the sql query.
-
+This is silver bullet of optimization sql query. Usually in the from clause we need to narrow the results by using subqueries then join other tables. The subquery should include limit clause if it is possible or we need to denormalize the database.
 
 
 ### Reference 
