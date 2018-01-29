@@ -157,13 +157,13 @@ const TEXT    = 2  // text    => 2
 const REORDER = 3  // reorder => 3
 ```
 
-Now we know all the possible mutations of a new node, then we need to store those mutations for certain node. Thus we need to give each node a uuid as well as a map for storage. This is because we can locate the mutations by
+Now we know all the possible mutations of a new node, then we need to store those mutations for certain node. Thus we need to give each node a uid as well as a map for storage. This is because we can locate the mutations by
 
 ```js
-let mutations = patch[uuid]
+let mutations = patch[uid]
 ```
 
-eg: we change class name of a node. Then we generate with uuid as 7. Then the mutations should be recorder as 
+eg: we change class name of a node. Then we generate with uid as 7. Then the mutations should be recorder as 
 
 ```js
 patch = {
@@ -181,88 +181,116 @@ The diff function entry
 ```js
 
 function diff (oldTree, newTree) {
-  let uuid   = 0 // uuid for identify the node
+  let uid   = 0 // uid for identify the node
   let patches = {} 
-  dfsTravel(oldTree, newTree, uuid, patches)
+  dfsTravel(oldTree, newTree, uid, patches)
   return patches
 }
 ```
 
 ### Tree diff 
 
-Now we know the node different, then we can move to the tree diff which is to compare nodes with same depth. Usually, a uuid will be given to each node with Depth First Search. Moreover, when traveling with dfs, each node will also been compared accordingly. 
+Now we know the node different, then we can move to the tree diff which is to compare nodes with same depth. Usually, a uid will be given to each node with Depth First Search. Moreover, when traveling with dfs, each node will also been compared accordingly. 
 
 ![dfswalks](/assets/img/toyvnodedfs.png)
 
+There are different ways to give a uid to a node such as global uid implementation, hash method. The way in toy-v-node is very simple. The child uid = (total count of descendants of left sibing) + father uid + 1. Thus we need to count descendants of vdom before diff.
 
 ```js
-import { is } from 'ramda' // import is type
+    // inside ToyVDom class
+    // this should be called only once when the root virtual dom is initialized
+    countDescendants() {
+        this.children.forEach(child => {
+            if (child instanceof ToyVDom) {
+                this.count += child.countDescendants()
+            } 
+            this.count++
+        })
+        return this.count
+    }
+
+    el.countDescendants()
+
+```
+
+![dfswalks](/assets/img/vdomCount.png)
+
+
+The diff method will be
+
+
+```js
+function diff (oldTree, newTree) {
+    let uid   = 0 // uid for identify the node
+    let patches = {} 
+    dfsTravel(oldTree, newTree, uid, patches)
+    return patches
+}
+
 /**
  * dfsTravel Travel virtual node 
  * @param  { Object } oldVDom
  * @param  { Object } newVDom
- * @param  { Number } uuid   - current old virtual dom unique id
+ * @param  { Number } uid   - current old virtual dom unique id dfs position
  * @param  { Object } patches - map of patches
  */
-function dfsTravel (oldVDom, newVDom, uuid, patches) {
+
+function dfsTravel (oldVDom, newVDom, uid, patches) {
   let currentPatch = []
 
   // old virtual dom is removed
   if (newVDom === null || newVDom === undefined) {
     // no actions needed 
-  } else if (is(String, oldVDom) && is(String, newVDom)) {
+  } else if ((oldVDom instanceof String) && (newVDom instanceof String)) {
     // text virtual dom
     if (oldVDom !== newVDom) currentPatch.push({ type: TEXT, content: newNode })
   } else if (
     // props diff
     oldVDom.tagName === newVDom.tagName &&
-    oldVDom.key     === newVDom.key // key from should from props which identify the dom which different from uuid
+    oldVDom.key     === newVDom.key // key from should from props which identify the dom which different from uid
   ) {
     let propsPatches = diffProps(oldVDom, newVDom)
     if (propsPatches) {
-      currentPatch.push({ type: ATTRS, props: propsPatches })
+      currentPatch.push({ type: PROPS, props: propsPatches })
     }
     // compare the child array
-    diffChildren(oldVDom.children, newVDom.children, uuid, patches)
+    diffChildren(oldVDom.children, newVDom.children, uid, patches)
   }
   else {
     currentPatch.push({ type: REPLACE, node: newVDom})
   }
 
   if (currentPatch.length > 0) {
-    patches[uuid] = currentPatch
+    patches[uid] = currentPatch
   }
 } 
 
-// diff with children
-function diffChildren (oldChildren, newChildren, uuid, patches, currentPatch) {
+/**
+ * diff with children array
+ * @param  { Object } oldVDom
+ * @param  { Object } newVDom
+ * @param  { Number } uid   - father virtual dom unique id dfs position
+ * @param  { Object } patches - map of patches
+ * @param  { Array } currentPatch - array of patches contains mutations
+ */
+function diffChildren (oldChildren, newChildren, puid, patches, currentPatch) {
   let leftNode = null
-  let currentNodeIndex = uuid
+  let currentNodeIndex = puid
   oldChildren.forEach(function (child, i) {
     let newChild = newChildren[i]
-    currentNodeIndex = dfsUuid(v, uuid) 
-    dfsWalk(child, newChild, currentNodeIndex, patches) // dfs children array node
+    currentNodeIndex = reproducdUUID(v, puid) 
+    dfsTravel(child, newChild, currentNodeIndex, patches) // dfs children array node
     leftNode = child
   })
 }
 
-// count descentdants of a virutal dom
-function countDescendants (vdom, count) {
-  if (vdom) {
-    vdom.children.foreach(v => {
-      if (v instanceof ToyVDom) {
-        count += countDescendants(vdom, count) 
-      }
-      count ++
-    })
-  }
-  return count
-}
-
-// get dfs uuid of a virtual dom from left node and parent uuid 
-function dfsUuid (leftNode, puuid) {
-  let leftNodeDescendants = countDescendants(leftNode, 0)
-  return leftNodeDescendants ? puuid + leftNodeDescendants + 1 : puuid + 1 
+/**
+ * reproduce uid based on left node and parent uid
+ * @param  { Object } leftNode
+ * @param  { Number } uid   - father virtual dom unique id dfs position
+ */
+function reproducdUUID (leftNode, puid) {
+  return (leftNode && leftNode.count) ? puid + leftNode.count + 1 : puid + 1 
 }
 
 // diff Attributes function
@@ -300,15 +328,102 @@ function diffProps (oldVDom, newVDom) {
 }
 ```
 
-### list diff
 
+The code above can only perform replace, props change and text change.
 
+![simple diff](/assets/img/simplediff.png)
+
+We have two problems here:
+
+* If the position of children was switched, for example, div, p switch to p, div. Then the diff method above will replace all of them. 
+
+* Insert or remove mutations have not been implemented yet
+
+Thus, we need to need a reorder the new virtual dom, which would move the order of new vdom according to old one and add the reorder mutations to the parent patches. 
 
 ```js
-
+patches[puid] = [{
+  type: REORDER,
+  moves: [{remove or insert}, {remove or insert}, ...]
+}]
 ```
 
-In this simple implementation, the global uuid only ensure 
+### reorder 
+
+The children array might contains vdom with same tag name, thus it is not safe to identify vdom by tag names. Thus, we need a key (in props) to distinct same tag name vdoms.
+
+There are three phase in the reorder methods:
+
+* flat the both children array to hash maps and array with no key vdoms
+
+```js
+function flatChildrenArray (children) {
+  let keyHashMap = {}
+  let noKeyItems = []
+  for (let i = 0, len = children.length; i < len; i++) {
+    let item = children[i]
+    if (item.key) {
+      // key -- array index hash map
+      keyHashMap[item.key] = i
+    } else {
+      noKeyItems.push(item)
+    }
+  }
+  return {
+    keyHashMap: keyHashMap,
+    noKeyItems: noKeyItems
+  }
+}
+```
+
+The keyHashMap enable to trace back to the index of the children array. noKeyDoms keep vdom without keys.
+
+* create a temperate children array from newChildren based on keys in oldChildren
+
+```js
+let newKeyHashap = flatChildrenArray(newChildren).keyHashMap
+let i = 0
+let noKeyIndex = 0
+let temChildren = []
+while (i < oldChildren.length) {
+  item = oldChildren[i]
+  if (item.key) {
+    // no key in new children then push null 
+    if (!newKeyHashMap.hasOwnProperty(item.key)) {
+      temChildren.push(null)
+    } else {
+      // get array index of item in new children array
+      let itemNewChildrenArrayIndex = newKeyHashMap[item.key]
+      temChildren.push(newList[itemNewChildrenArrayIndex])
+    }
+  } else {
+    let noKeyItem = noKeyItems[noKeyIndex++]
+    temChildren.push(noKeyItem || null)
+  }
+  i++
+}
+```
+
+Now the temChildren have the same order and length with old children and it should be returned to
+
+* get remove mutations from temChildren and create formatedArray without null
+
+```js
+let formatedArray = [...temChildren]
+i = 0
+while (i < formatedArray.length) {
+  if (formatedArray[i] === null) {
+    remove(i)
+    removeNullFromFormatedArray(i)
+  } else {
+    i++
+  }
+}
+```
+
+* compare
+
+In this simple implementation, the global uid only ensure 
 
 
 

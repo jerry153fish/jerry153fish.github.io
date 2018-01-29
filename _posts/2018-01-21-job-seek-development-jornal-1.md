@@ -1,22 +1,23 @@
 ---
 layout: post
 title: Job Seek Development Journal - 1
-key: 20170701
-tags: python scrapy sqlalchemy agile sqlite oop nltk
+key: 20180121
+tags: c# enity rabbitmq redis sharpnltk agile
 ---
 
-This development journal collects my development traces of job seek. Job seeker started when the project I was working was about to finish. I wanted to keep an eye on job market and the trend of techniques.
+Job seeker started when wherewot projects were about to finish. The first version of it was wrote in python. Now I want to refactor it with .net core stack due to the job market needs in hobart.
 
-### Requirement development 
+The purposes of this toy project is very simple,
 
-The purposes of this toy project is very simple, 
-
-1. Find jobs in employment websites based on keywords
-2. Automatically generate Cover letters and CVs in terms of the profile and job details
+* Find jobs in employment websites based on search query
+* Automatically generate Cover letters and CVs in terms of the profile and job details
+* Analyse the user inputs and job market and try to give useful statistics
 
 ### Requirement Analysis 
 
-According to the requirements,  three are four sub-system is essential here.
+The figure below demonstrate the subsystems needed in job seek and the main technique stacks required,
+
+![job seek main](/assets/img/jobseek/job-seek.png) 
 
 * User interface
     * command line
