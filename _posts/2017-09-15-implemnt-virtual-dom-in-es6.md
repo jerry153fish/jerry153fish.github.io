@@ -241,9 +241,9 @@ function dfsTravel (oldVDom, newVDom, uid, patches) {
   // old virtual dom is removed
   if (newVDom === null || newVDom === undefined) {
     // no actions needed 
-  } else if ((oldVDom instanceof String) && (newVDom instanceof String)) {
+  } else if (isString(oldVDom) && isString(newVDom)) {
     // text virtual dom
-    if (oldVDom !== newVDom) currentPatch.push({ type: TEXT, content: newNode })
+    if (oldVDom !== newVDom) currentPatch.push({ type: TEXT, content: newVDom })
   } else if (
     // props diff
     oldVDom.tagName === newVDom.tagName &&
@@ -257,7 +257,7 @@ function dfsTravel (oldVDom, newVDom, uid, patches) {
     diffChildren(oldVDom.children, newVDom.children, uid, patches)
   }
   else {
-    currentPatch.push({ type: REPLACE, node: newVDom})
+    currentPatch.push({ type: REPLACE, dom: newVDom})
   }
 
   if (currentPatch.length > 0) {
@@ -278,7 +278,7 @@ function diffChildren (oldChildren, newChildren, puid, patches, currentPatch) {
   let currentNodeIndex = puid
   oldChildren.forEach(function (child, i) {
     let newChild = newChildren[i]
-    currentNodeIndex = reproducdUUID(v, puid) 
+    currentNodeIndex = reproducdUUID(leftNode, puid) 
     dfsTravel(child, newChild, currentNodeIndex, patches) // dfs children array node
     leftNode = child
   })
@@ -326,6 +326,13 @@ function diffProps (oldVDom, newVDom) {
 
   return propsPatches
 }
+
+function isString (value) {
+  if (typeof value === 'string' || value instanceof String) {
+    return true
+  }
+  return false
+}
 ```
 
 
@@ -348,91 +355,232 @@ patches[puid] = [{
 }]
 ```
 
-### reorder 
+### Reorder 
 
 The children array might contains vdom with same tag name, thus it is not safe to identify vdom by tag names. Thus, we need a key (in props) to distinct same tag name vdoms.
 
 There are three phase in the reorder methods:
 
-* flat the both children array to hash maps and array with no key vdoms
+1. flat the both children array to hash maps and array with no key vdoms
 
 ```js
-function flatChildrenArray (children) {
-  let keyHashMap = {}
-  let noKeyItems = []
-  for (let i = 0, len = children.length; i < len; i++) {
-    let item = children[i]
-    if (item.key) {
-      // key -- array index hash map
-      keyHashMap[item.key] = i
-    } else {
-      noKeyItems.push(item)
+function flatChildrenArray(children) {
+    let keyHashMap = {}
+    let noKeyItems = []
+    for (let i = 0, len = children.length; i < len; i++) {
+        let item = children[i]
+        let itemKey = getKey(item)
+        if (itemKey) {
+            // key -- array index hash map
+            keyHashMap[itemKey] = i
+        } else {
+            noKeyItems.push(item)
+        }
     }
-  }
-  return {
-    keyHashMap: keyHashMap,
-    noKeyItems: noKeyItems
-  }
+    return {
+        keyHashMap: keyHashMap,
+        noKeyItems: noKeyItems
+    }
+}
+
+function getKey (vdom) {
+    if (!vdom) return void 0
+    let props = vdom.props
+    if (props) {
+        return props.key
+    } else {
+        return void 0
+    }
 }
 ```
 
 The keyHashMap enable to trace back to the index of the children array. noKeyDoms keep vdom without keys.
 
-* create a temperate children array from newChildren based on keys in oldChildren
+2. create a reordered new children array from newChildren based on keys in oldChildren
 
 ```js
-let newKeyHashap = flatChildrenArray(newChildren).keyHashMap
-let i = 0
-let noKeyIndex = 0
-let temChildren = []
-while (i < oldChildren.length) {
-  item = oldChildren[i]
-  if (item.key) {
-    // no key in new children then push null 
-    if (!newKeyHashMap.hasOwnProperty(item.key)) {
-      temChildren.push(null)
-    } else {
-      // get array index of item in new children array
-      let itemNewChildrenArrayIndex = newKeyHashMap[item.key]
-      temChildren.push(newList[itemNewChildrenArrayIndex])
+function generateReOrderNewChildren (oldChildren, newChildren, flatNewChildren) {
+    let i = 0
+    let reorderedNewChildren = []
+    let newKeyHashMap = flatNewChildren.keyHashMap
+    let noKeyItems = flatNewChildren.noKeyItems
+    let noKeyIndex = 0
+    while (i < oldChildren.length) {
+        item = oldChildren[i]
+        itemKey = getKey(item)
+        if (itemKey) {
+          if (!newKeyHashMap.hasOwnProperty(itemKey)) {
+            reorderedNewChildren.push(null)
+          } else {
+            let newItemIndex = newKeyHashMap[itemKey]
+            reorderedNewChildren.push(newChildren[newItemIndex])
+          }
+        } else {
+          let noKeyItem = noKeyItems[noKeyIndex++]
+          reorderedNewChildren.push(noKeyItem || null)
+        }
+        i++
     }
-  } else {
-    let noKeyItem = noKeyItems[noKeyIndex++]
-    temChildren.push(noKeyItem || null)
-  }
-  i++
+    return reorderedNewChildren
 }
 ```
 
-Now the temChildren have the same order and length with old children and it should be returned to
+Now the reorderedNewChildren have same order and length with old children
 
-* get remove mutations from temChildren and create formatedArray without null
+3. format the reorderedNewChildren: remove null dom and add to moves mutations
 
 ```js
-let formatedArray = [...temChildren]
-i = 0
-while (i < formatedArray.length) {
-  if (formatedArray[i] === null) {
-    remove(i)
-    removeNullFromFormatedArray(i)
-  } else {
+function clearRecorderNewChildrenAndRecordRemove (reorderedNewChildren, moves) {
+    let i = 0
+    let formatedRecordNChildren = [...reorderedNewChildren]
+    while (i < formatedRecordNChildren.length) {
+      if (formatedRecordNChildren[i] === null) {
+        recordRemove(i, moves)
+        removeArrayByIndex(formatedRecordNChildren, i)
+      } else {
+        i++
+      }
+    }
+    return formatedRecordNChildren
+}
+```
+
+4. compare formatedNewChildrenArray with newChildren array, records insert, moves mutations
+
+```js
+function generateInsertMoveMutations (formatedRecordNChildren, newChildren, flatOldChildren, moves) {
+  let j = i = 0
+  let oldKeyHashMap = flatOldChildren.keyHashMap
+  while (i < newChildren.length) {
+    item = newChildren[i]
+    itemKey = getKey(item)
+
+    let formatedRecorderedItem = formatedRecordNChildren[j]
+    let formatedRecorderedItemKey = getKey(formatedRecorderedItem)
+
+    if (formatedRecorderedItem) {
+      if (itemKey === formatedRecorderedItemKey) {
+        j++
+      } else {
+        // new item, recorder insert
+        if (!oldKeyHashMap.hasOwnProperty(itemKey)) {
+          recordInsert(i, item, moves)
+        } else {
+          // remove formatedrecorder array if next one is equal to new children
+          let nextformatedRecorderedItemKey = getKey(formatedRecordNChildren[j + 1])
+          if (nextformatedRecorderedItemKey === itemKey) {
+            recordRemove(i, moves)
+            removeArrayByIndex(formatedRecordNChildren, j)
+            j++ // after removing, current j is right, just jump to next one
+          } else {
+            // else insert item
+            recordInsert(i, item, moves)
+          }
+        }
+      }
+    } else {
+      recordInsert(i, item, moves)
+    }
     i++
   }
 }
 ```
 
-* compare
+At this stage we records all reorder moves, the reorder method is completed. All the moves and the sorted tem children array for virtual dom diff will be returned.
 
-In this simple implementation, the global uid only ensure 
+```js
 
+return {
+  moves: moves,
+  reorderedNewChildren: reorderedNewChildren
+}
+```
 
+Then we can update our diffchildren method
 
+```js
+function diffChildren (oldChildren, newChildren, puid, patches, currentPatch) {
+  let reorders = reorder(oldChildren, newChildren)
+  newChildren = reorders.children
 
+  if (reorders.moves.length) {
+    let reorderPatch = { type: REORDER, moves: reorders.moves }
+    currentPatch.push(reorderPatch)
+  }
+  let leftNode = null
+  let currentNodeIndex = puid
+  oldChildren.forEach(function (child, i) {
+    let newChild = newChildren[i]
+    currentNodeIndex = reproducdUUID(v, puid) 
+    dfsTravel(child, newChild, currentNodeIndex, patches) // dfs children array node
+    leftNode = child
+  })
+}
+```
+### Patch
 
+Now we have record all the mutations in a hashmap: patches
 
+![vdompatch](/assets/img/vdompatch.png)
 
+The patch method updates patches to old read dom, it is very similar to diff. As the real dom tree have the same structure as the old virtual dom. 
 
+```js
+function patch (realDom, patches) {
+  let walker = {uid: 0}
+  dfsTravelRDom(realDom, walker, patches)
+}
 
+function dfsTravelRDom (realDom, walker, patches) {
+  // get current patches
+  let currentPatches = patches[walker.uid]
+
+  let len = realDom.childNodes
+    ? realDom.childNodes.length
+    : 0
+  // travel children array
+  for (var i = 0; i < len; i++) {
+    var child = realDom.childNodes[i]
+    walker.uid++
+    dfsTravelRDom(child, walker, patches)
+  }
+  // apply patch
+  if (currentPatches) {
+    updatePatches(realDom, currentPatches) // 对当前节点进行DOM操作
+  }
+}
+
+// update patches
+function updatePatches (realDom, currentPatches) {
+  currentPatches.forEach(function (currentPatch) {
+    switch (currentPatch.type) {
+      case REPLACE:
+        replaceDom(realDom, currentPatch.dom)
+        break
+      case REORDER:
+        reorderChildren(realDom, currentPatch.moves)
+        break
+      case PROPS:
+        setProps(realDom, currentPatch.props)
+        break
+      case TEXT:
+        node.textContent = currentPatch.content
+        break
+    }
+  })
+}
+
+```
+
+check the detailed [path.js](https://github.com/jerry153fish/toy-v-dom)
+
+### Conclusion
+
+The virtual dom would greatly improve the performance in MVVM framework. The can be achieved in three steps:
+
+1. virtual dom render as real dom
+2. compare old virtual dom with new virtual dom and find the mutations
+3. update those differences to the real dom
 
 
 ### Reference
