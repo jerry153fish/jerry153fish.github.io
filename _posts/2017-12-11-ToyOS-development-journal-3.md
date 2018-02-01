@@ -508,7 +508,7 @@ Setting up interupts could be divided into three steps
 * Initialize PIC
 * Snapshot and restore
 
-[interrups](https://alex.dzyoba.com/img/interrupts.png)
+![interrups](https://alex.dzyoba.com/img/interrupts.png)
 
 Not only need we to set up IDT table, but also must we set up static exceptions and interrupts entries. Then we need to initialize the two pics, there are three must-do here: initilize, remap and acknowledge in pic. When it comes spapshot and restore, we need to reserve the registers and segments before call real interrupt hander and restore them after handler called. Check [source code](https://gitlab.com/study-c/study-c-plus-plus/toyOS/tree/e096481911b7951643e107eedd0e84793a8938fd) for detailed code.
 

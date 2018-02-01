@@ -572,7 +572,7 @@ function updatePatches (realDom, currentPatches) {
 
 ```
 
-check the detailed [path.js](https://github.com/jerry153fish/toy-v-dom)
+check the detailed [patch.js](https://github.com/jerry153fish/toy-v-dom)
 
 ### Conclusion
 

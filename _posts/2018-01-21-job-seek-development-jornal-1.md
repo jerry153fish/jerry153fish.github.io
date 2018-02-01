@@ -2,10 +2,10 @@
 layout: post
 title: Job Seek Development Journal - 1
 key: 20180121
-tags: c# enity rabbitmq redis sharpnltk agile
+tags: c# enity rabbitmq redis sharpnltk agile DDD
 ---
 
-Job seeker started when wherewot projects were about to finish. The first version of it was wrote in python. Now I want to refactor it with .net core stack due to the job market needs in hobart.
+Job seeker started when wherewot projects were about to finish. The first version of it was wrote in python. Now I want to refactor it with .net core stack due to ~~the job market trends in hobart~~ its simplicity and powerful features.
 
 The purposes of this toy project is very simple,
 
@@ -13,56 +13,135 @@ The purposes of this toy project is very simple,
 * Automatically generate Cover letters and CVs in terms of the profile and job details
 * Analyse the user inputs and job market and try to give useful statistics
 
-### Requirement Analysis 
 
-The figure below demonstrate the subsystems needed in job seek and the main technique stacks required. This is just a mind map, which could be updated during development. However, the main stack will be .net core based and we will adopt C / S model to develop this projetc.
+The python version I wrote before is only for personal usage, I was always told 'dream bigger'. So this version, I am going to extends its scalability by turning into a C / S cloud application.
+
+### Feasibility and possible technique sets 
+
+The figure below displays the simple DDD four layer structure and the main technique stacks required within them. Despite many need-to-learn knowledge especially the .net core stack and rabbitmq, most of concepts and design pattern in the project are not new for me.
 
 ![job seek main](/assets/img/jobseek/job-seek.png) 
 
 
-* Server layer
-    * .net core API + Websocket
-    * will separate the model layer
-    * a cache layer before it
+### Main architecture
 
-* Ends
-    * Simple reactjs / redux / websocket
-    * Use indexdb as cache -- hash query key based
-    * Might demonstrate statistics 
+I will use CQRS for the main pattern[^1], because:
 
-* Analysis
-    * bag of keys + ntlk for text analysis and tagging
-    * might use AI to for tagging
-    * for both job and profile 
-
-* Scrapy
-    * performance bottlenecks must work with message broker in RPC model ? 
-    * simple multiple threading
-
-* Message broker
-    * rabbitmq + RPC model ?
-
-* Utility
-    * PDF generator server / end ?
-    * docs generator 
-    * email sender
-
-* Models
-    * Entity 
-    * Job groups
-    * Profile group
-    * Tag based
+* To send job one by one back to user in websocket if use start to search job by keywords
+* There are many time consuming tasks in the project: web crawling / email / pdf and docs generating
+* The analyse tasks will use lots of write IO
+* Only need eventually consistency
 
 
-### Simple Sequence diagram
+![CQRS](/assets/img/jobseek/CQRS.jpg)
 
-The main sequence of this job seek would be:
 
-1. When user open end, a websocket connection will be established.
-2. The server will initialize jwt, message queue and other server resource
-3. The user start to search
-4. check cache in both client side and server side see if there was a hit
-5. If new search, server start to scarpy | tag the result | save to database | generate cv or letters
-    *   scrapy will use 
+The main process of this job seek would be:
 
+1. When user open any ends, a websocket connection will be established.
+2. The server will initialize jwt, message broker and other server resource
+3. Then depends on the actions user started, the controller will decide to go through command bus or directly query database.
+
+### Domain define
+
+Despite not been an expert in job seeking area, after finishing this project, I hope I will be. 
+
+#### UL 
+
+* job: which refers to the posted job in the job market website -- taggable
+* requirements: the requirement in a job -- taggable
+* employer: just employer -- taggable
+* category: job category
+
+
+* location: location contains address and latitude / longitude
+* locality: locality with postcode
+* state: state
+* country: country
+
+
+* profile: a collection of user information, skills, education, experience, projects and so on
+* skills: skills -- taggable
+* experience: working experience -- taggable
+* projects: user projects -- taggable
+* activities: user activities -- taggable
+
+
+* tags: identifier and corner store in the project
+* keywords: just keywords
+
+* user: login user and non login user
+* role: role
+* assets: cvs, cover letters, applied jobs
+* token: json web token for user
+
+#### BC
+
+* user search
+* user query
+* user register / login
+* user manage
+* tag system
+
+
+#### Entity
+
+* job
+* user
+* profile
+* experience
+* projects
+* educations
+* activities
+* otherItems
+
+#### Value Object
+
+* tag
+* keyword
+* category
+* skills
+* requirements
+* location
+* locality
+* state
+* country
+* employer
+
+#### db design
+
+As can been seen from the db table below, job seek is highly replied on tag system. All every value objects and some profile related entities are tagged with a weight.
+
+![db design](/assets/img/jobseek/db-design.jpg)
+
+### Preparing
+
+Docker is essential for development in job seek development for three purpose
+
+* rabbitmq
+
+```sh
+ docker run -d --hostname my-rabbit -p 5672:5672 --name first-rabbit rabbitmq:3
+ ```
+
+* redis / postgres
+
+```sh
+docker run -p 6379:6379 --name first-redis -d redis # redis
+docker run -p 5432:5432 --name first-postgres -e POSTGRES_PASSWORD=hellopassword -d postgres # posgresql
+
+```
+* selenium with chrome
+
+```sh
+docker run -p 4444:4444 --name first-selenium -d selenium/standalone-chrome
+```
+
+
+
+
+
+### Reference
+
+[^1]: Microsoft 2018, **CQRS Journey and guide**, https://msdn.microsoft.com/en-us/library/jj554200.aspx
 

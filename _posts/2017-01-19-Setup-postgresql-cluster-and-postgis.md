@@ -1,6 +1,6 @@
 --- 
 layout: post
-title: Postgresql Alter Data Directory And Install Postgis 
+title: Setup postgesql cluster and install Postgis 
 key: 20170118
 tags: hosting website free
 ---
@@ -31,15 +31,17 @@ sudo mv /var/lib/postgresql/9.5/main /var/lib/postgresql/9.5/main.bak ## backup 
 # change data directory
 sudo vim /etc/postgresql/9.5/main/postgresql.conf
 
-data_directory = '/data/pg/postgresql/9.5/main'
+    data_directory = '/data/pg/postgresql/9.5/main' 
 
 sudo systemctl start postgresql
 ```
 
 #### set up postgis
+
 ```
 sudo apt install postgis postgresql-9.5-postgis-2.2
 ```
+
 ### Bug appears
 
 > postgis faild to create postgis extension ppa
@@ -66,6 +68,7 @@ libopenscenegraph-dev : Depends: libopenthreads-dev but it is not going to be in
 ```
 
 Then check what has been installed
+
 ```sh
 # list what installed
 dpkg -l | egrep "open(scenegraph|threads)"
