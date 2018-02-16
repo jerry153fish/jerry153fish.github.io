@@ -93,10 +93,10 @@ This is for crawling the employment websites in two steps, crawl the list pages 
 
 
 * profile: a collection of user information, skills, education, experience, projects and so on
-* skills: skills -- taggable
-* experience: working experience -- taggable
-* projects: user projects -- taggable
-* activities: user activities -- taggable
+* skills: skills 
+* experience: working experience 
+* projects: user projects
+* activities: user activities 
 
 
 * tags: identifier and corner store in the project
@@ -150,6 +150,12 @@ This is for crawling the employment websites in two steps, crawl the list pages 
     * tagged jobs
     * tagged educations
     * value objects: skills, location, etc
+
+* user
+    * user as aggregate
+    * tagged profile
+    * CVS / Cover Letters
+    * Applied jobs
 
 ### Domain services
 
