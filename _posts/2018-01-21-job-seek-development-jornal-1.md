@@ -192,7 +192,7 @@ The reasons I choose DDD and CQRS are some problems raised when I developed simp
 
 For scrapy, I separated the list crawling and detailed crawling and use job pools for communication. As for tagging, I pre-tagging my own profile and used simple bag of keywords for job tagging. Moreover, cached every steps.
 
-If it became a C / S app, the concept will be same, but there would be some major difference:
+If it became a C / S | B / S app, the concept will be same, but there would be some major difference:
 
 * Message broker for communication 
 * scrapy for job list is personal and detailed job crawling should shared among users.

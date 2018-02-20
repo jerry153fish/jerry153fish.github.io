@@ -76,7 +76,7 @@ public class SomeAggregateMapper : IEntityTypeConfiguration<SomeAggregate>
 then add mapper to ```Configurations``` in ```modelBuilder```
 
 ```cs
-modelBuilder.Configurations.Add(new SomeAggregateMapper());
+modelBuilder.ApplyConfiguration(new SomeAggregateMapper());
 ```
 
 ### One to One
@@ -134,7 +134,7 @@ public class UserMapper : IEntityTypeConfiguration<Profile>
 
 ### One to Many
 
-A profile has many projects add ```public virutal IICollection<Project> Projects { get; set; }``` to Profile class
+A profile has many projects add ```public virutal ICollection<Project> Projects { get; set; }``` to Profile class
 
 
 ```cs
@@ -148,7 +148,7 @@ public class Project
 }
 
 
-public class ProjectMapper : IIEntityTypeConfiguration<Project>
+public class ProjectMapper : IEntityTypeConfiguration<Project>
 {
     public void Configure(EntityTypeBuilder<Project> builder)
     {
@@ -193,14 +193,14 @@ public class TagKeyword
     public Keyword Keyword { get; set; }    
 }
 
-public class TagKeywordMapper : IIEntityTypeConfiguration<TagKeyword>
+public class TagKeywordMapper : IEntityTypeConfiguration<TagKeyword>
 {
     public void Configure(EntityTypeBuilder<TagKeyword> builder)
     {
         builder.HasKey(t => new { t.TagId, t.KeywordId });
 
-        builder.HasRequired(t => p.Tag).WithMany(t => t.TagKeywords).HasForeignKey(t => t.TagId);
-        builder.HasRequired(t => p.Keyword).WithMany(k => k.TagKeywords).HasForeignKey(t => t.KeywordId);
+        builder.HasOne(tk => tk.Tag).WithMany(t => t.TagKeywords).HasForeignKey(tk => tk.TagId);
+        builder.HasOne(tk => tk.Keyword).WithMany(k => k.TagKeywords).HasForeignKey(tk => tk.KeywordId);
     }
 }
 
@@ -214,6 +214,8 @@ When it comes to inheritance in EF Core 2.0, there are three types of relations:
 
 ![tph](/assets/img/tph.png)[^2]
 
+
+
 * TPT：Table per type
 
 
@@ -224,7 +226,9 @@ When it comes to inheritance in EF Core 2.0, there are three types of relations:
 
 ![tpc](/assets/img/tpc.png)[^2]
 
- 
+ ### Conclusion
+
+ This is just a first glance of EF, there are so many things need to be learnt during the development of projects.
 
 ### API Reference
 

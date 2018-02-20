@@ -7,7 +7,114 @@ tags: c# enity rabbitmq redis sharpnltk agile DDD
 
 Last week, I tried to fit this small job seek in DDD pattern. And this week, I am going to learn how to implement it.
 
-### Preparing
+
+### Project Setup
+
+```cs
+// create DotNetJobSeek solution
+dotnet new sln -o DotNetJobSeek
+// src: source codes folder
+// test: test codes folder
+// documents: documents foler
+mkdir src test documents
+// README file
+touch README.md
+// add Domain projects and corresponding test
+dotnet new console -o src/DotNetJobSeek.Domain
+dotnet new xunit -o test/DotNetJobSeek.Domain.Tests
+
+```
+
+```
+├── DotNetJobSeek.sln
+├── DotNetJobSeek.userprefs
+├── README.md
+├── documents
+│   ├── Job\ seek.xmind
+│   ├── job\ seek.vpp
+├── src
+│   ├── DotNetJobSeek.Domain
+└── test
+    └── DotNetJobSeek.Domain.Test
+
+```
+
+### Add Constrains
+
+The first need to be done is to add constrains for assets in domain to distinguish Entity, ValueObject, AggregateRoot and Repository.
+
+```cs
+// IEntity interface contains a object key
+namespace DotNetJobSeek.Domain
+{
+    public interface IEntity
+    {
+        // object key for string / int / Guid
+        object Key { get;}
+    } 
+}
+
+// IAggretage interface
+namespace DotNetJobSeek.Domain
+{
+    public interface IAggregateRoot : IEntity
+    {
+        
+    }
+}
+
+// IRepository
+namespace DotNetJobSeek.Domain
+{
+    public interface IRepository<T> where T : IAggregateRoot
+    {
+
+    } 
+}
+
+```
+
+### ValueObjects
+
+Any DAO without constrains in this project is valueObjects. 
+
+
+
+
+
+
+3. Entities
+
+
+
+1. EF Core set up
+
+```sh
+# create domain project
+dotnet new console -o DotNetJobSeek.Domain
+
+# inside Domain add database connect for sqlserver or postgresql
+# sqlite dotnet add package Microsoft.EntityFrameworkCore.Sqlite
+# postgresql dotnet add package Npgsql.EntityFrameworkCore.PostgreSQL
+dotnet add package Microsoft.EntityFrameworkCore.SqlServer # 
+# add 
+dotnet add package Microsoft.EntityFrameworkCore.Design
+
+```
+
+Then add 
+
+```
+<ItemGroup>
+  <DotNetCliToolReference Include="Microsoft.EntityFrameworkCore.Tools.DotNet" Version="2.0.0" />
+</ItemGroup>
+```
+
+to DotNetJobSeek.csproj
+
+```sh
+dotnet restore
+```
 
 To begin with, docker is used to set up external services in this project:
 
@@ -36,87 +143,4 @@ Web crawling
 
 ```sh
 docker run -p 4444:4444 --name first-selenium -d selenium/standalone-chrome
-```
-
-### Project file structure
-
-├── DotNetJobSeek.sln
-├── DotNetJobSeek.userprefs
-├── README.md
-├── documents
-│   ├── Job\ seek.xmind
-│   ├── job\ seek.vpp
-├── src
-│   ├── DotNetJobSeek.UI
-│   └── DotNetJobSeek.Application
-│   └── DotNetJobSeek.Domain
-│   └── Infrastructure
-|        └── DotNetJobSeek.Scrpay
-|        └── DotNetJobSeek.Utility 
-|        └── DotNetJobSeek.Tag
-|        └── DotNetJobSeek.Repository
-|        └── DotNetJobSeek.MQ 
-└── test
-│   ├── UI.Tests
-│   └── Application.Tests
-│   └── Domain.Tests
-│   └── Infrastructure.Tests
-|        └── DotNetJobSeek.Scrpay.Tests
-|        └── DotNetJobSeek.Utility.Tests
-|        └── DotNetJobSeek.Tag.Tests
-|        └── DotNetJobSeek.Repository.Tests
-|        └── DotNetJobSeek.MQ.Tests
-
-### Domain Implementation
-
-1. EF Core set up
-
-```sh
-# create domain project
-dotnet new console -o DotNetJobSeek.Domain
-
-# inside Domain add database connect for sqlserver or postgresql
-dotnet add package Microsoft.EntityFrameworkCore.SqlServer # 
-# add 
-dotnet add package Microsoft.EntityFrameworkCore.Design
-
-```
-
-Then add 
-
-```
-<ItemGroup>
-  <DotNetCliToolReference Include="Microsoft.EntityFrameworkCore.Tools.DotNet" Version="2.0.0" />
-</ItemGroup>
-```
-
-to DotNetJobSeek.csproj
-
-```sh
-dotnet restore
-```
-
-2. Add constrains 
-
-Add constrains for assets in domain and will enrich them during the future development
-
-```cs
-// IEntity interface contains a object key
-namespace DotNetJobSeek.Domain
-{
-    public interface IEntity
-    {
-        object Key { get;}
-    } 
-}
-
-// IAggretage interface
-namespace DotNetJobSeek.Domain
-{
-    public interface IAggregateRoot : IEntity
-    {
-        
-    }
-}
-
 ```
