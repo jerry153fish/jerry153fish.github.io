@@ -78,25 +78,76 @@ namespace DotNetJobSeek.Domain
 
 Any DAO without constrains in this project is valueObjects. 
 
+```cs
+// Keyword.cs
+namespace DotNetJobSeek.Domain
+{
+    public class Keyword
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        [NotMapped]
+        public int Weight { get; set; }
 
 
+        public virtual ICollection<TagKeyword> TagKeywords { get; } = new List<TagKeyword>();
 
+        // [NotMapped]
+        // public IEnumerable<Tag> Tags => TagKeywords.Select(e => e.Tag);
+    }
+}
 
+// Tag.cs
+namespace DotNetJobSeek.Domain
+{
+    public class Tag
+    {
+       public int Id { get; set; }
+       public string Name { get; set; }
+       // Version for future AI usage
+       public int Version { get; set; }
 
-3. Entities
+       public virtual ICollection<TagKeyword> TagKeywords { get; } = new List<TagKeyword>();
 
+    //    [NotMapped]
+    //    public IEnumerable<Keyword> Keywords => TagKeywords.Select(e => new Keyword {Id = e.Keyword.Id, Name = e.Keyword.Name, Weight = e.Weight });
+    }
+}
 
+// TagKeyword.cs
+namespace DotNetJobSeek.Domain
+{
+    public class TagKeyword
+    {
+        public int TagId { get; set; }
+        public Tag Tag { get; set; }
 
-1. EF Core set up
+        public int KeywordId { get; set; }
+        public Keyword Keyword { get; set; }
+        // weight for matching algorithm
+        public int Weight { get; set; }
+    }
+}
+
+```
+
+At this stage, I need to test many to many relations, Version / Weight fields for matching algorithm. Thus I need to setup the basic EF Infrastructure services and unit test.
+
+### EF In Infrastructure
+
+EF Dbcontext set up
 
 ```sh
-# create domain project
-dotnet new console -o DotNetJobSeek.Domain
-
+# create EF project
+dotnet new console -o src/Infrastructure/DotNetJobSeek.Infrastructure.E
+cd src/Infrastructure/DotNetJobSeek.Infrastructure.EF/
 # inside Domain add database connect for sqlserver or postgresql
-# sqlite dotnet add package Microsoft.EntityFrameworkCore.Sqlite
-# postgresql dotnet add package Npgsql.EntityFrameworkCore.PostgreSQL
-dotnet add package Microsoft.EntityFrameworkCore.SqlServer # 
+# sqlite is essential here for unit test
+dotnet add package Microsoft.EntityFrameworkCore.Sqlite
+# postgresql 
+dotnet add package Npgsql.EntityFrameworkCore.PostgreSQL
+# sqlserver 
+# dotnet add package Microsoft.EntityFrameworkCore.SqlServer # 
 # add 
 dotnet add package Microsoft.EntityFrameworkCore.Design
 
@@ -110,37 +161,218 @@ Then add
 </ItemGroup>
 ```
 
-to DotNetJobSeek.csproj
+to DotNetJobSeek.Infrastructure.EF.csproj
+
+Finally
 
 ```sh
 dotnet restore
+
+dotnet add reference ../../DotNetJobSeek.Domain/DotNetJobSeek.Domain.csproj
 ```
 
-To begin with, docker is used to set up external services in this project:
+#### Define [Mappers](https://jerry153fish.github.io/2018/02/16/DotNet-Study-Note-2-EF.html)
 
-* rabbitmq
+```cs
+// KeywordMapper
+namespace DotNetJobSeek.Infrastructure.EF
+{
+    public class KeywordMapper : IEntityTypeConfiguration<Keyword>
+    {
+        public void Configure(EntityTypeBuilder<Keyword> builder)
+        {
+            builder.HasIndex(k => k.Name)
+            .IsUnique();
+        }
+    }
+}
 
-This is for message queue and event notice.
+// TagMapper
+namespace DotNetJobSeek.Infrastructure.EF
+{
+    public class TagMapper : IEntityTypeConfiguration<Tag>
+    {
+        public void Configure(EntityTypeBuilder<Tag> builder)
+        {
+            builder.HasIndex(t => t.Name)
+            .IsUnique();
+            
+            builder.HasIndex(t => t.Version);
+            builder.Property(t => t.Version).HasDefaultValue(0);
+        }
+    }
+}
+
+// TagKeyword Mapper
+namespace DotNetJobSeek.Infrastructure.EF
+{
+    public class TagKeywordMapper : IEntityTypeConfiguration<TagKeyword>
+    {
+        public void Configure(EntityTypeBuilder<TagKeyword> builder)
+        {
+            builder.HasKey(t => new { t.TagId, t.KeywordId });
+
+            builder.HasOne(tk => tk.Tag).WithMany(t => t.TagKeywords).HasForeignKey(tk => tk.TagId);
+            builder.HasOne(tk => tk.Keyword).WithMany(k => k.TagKeywords).HasForeignKey(tk => tk.KeywordId);
+
+            builder.HasIndex(t => t.Weight);
+            builder.Property(t => t.Weight).HasDefaultValue(0);
+        }
+    }
+}
+```
+
+#### Configure EFContext
+
+1. EFContext could load dynamic connection string for test and different data persistance purposes.
+2. Dynamic loading mappers
+
+```cs
+public class EFContext : DbContext
+{
+
+    public EFContext()
+    { }
+    public EFContext(DbContextOptions<EFContext> options)
+        : base(options)
+    { }
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        // set default connection string
+        if(!optionsBuilder.IsConfigured)
+        {
+            // optionsBuilder.UseSqlite(@"DataSource=../../mydb.db");
+            optionsBuilder.UseNpgsql("Username=postgres;Password=hellopassword;Host=localhost;Port=5432;Database=jobseek;Pooling=true;", providerOptions=>providerOptions.CommandTimeout(60))
+            .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+        }
+    }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.ApplyConfiguration(new TagMapper());
+        modelBuilder.ApplyConfiguration(new KeywordMapper());
+        modelBuilder.ApplyConfiguration(new TagKeywordMapper());
+    }
+
+    public DbSet<Keyword> Keywords { get; set; }
+    public DbSet<Tag> Tags { get; set; }
+}
+```
+
+Then add migrations and init database if using pg or sqlserver
 
 ```sh
- docker run -d --hostname my-rabbit -p 5672:5672 --name first-rabbit rabbitmq:3
+
+dotnet ef migrations add init
+dotnet ef database update
+
 ```
 
-* Data persist 
+### Unit Test 
 
-Redis for cache, postgresql for data.  
+TDD is essential for this project as I have to write many test cases to verify the thought and practice new knowledge during development. 
+
 
 ```sh
-docker run -p 6379:6379 --name first-redis -d redis # redis for cache
-docker run -p 5432:5432 --name first-postgres -e POSTGRES_PASSWORD=hellopassword -d postgres # posgresql for data
-# or sql server 2017
-docker run -e 'ACCEPT_EULA=Y' -e 'MSSQL_SA_PASSWORD=Mypa33w0rd!' -p 1401:1433 --name sql1 -d microsoft/mssql-server-linux:2017-latest
+# add xunit test
+dotnet new xunit -o test/DotNetJobSeek.Domain.Test
+# add reference to Domain and EFContext
+cd test/DotNetJobSeek.Domain.Test
+dotnet add reference ../../src/DotNetJobSeek.Domain/DotNetJobSeek.Domain.csproj
+dotnet add reference ../../src/Infrastruture/DotNetJobSeek.Infrastructure.EF/DotNetJobSeek.Infrastructure.EF.csproj
 ```
 
-* selenium with chrome
+> According to Microsoft 2016[^1], SQLite has an in-memory mode that allows you to use SQLite to write tests against a relational database, without the overhead of actual database operations.
 
-Web crawling
+eg:
 
-```sh
-docker run -p 4444:4444 --name first-selenium -d selenium/standalone-chrome
+```cs
+public class TagKeywordMapperTest
+{
+    Keyword k1, k2, k3;
+    Tag t1, t2, t3;
+    public TagKeywordMapperTest()
+    {
+        k1 = new Keyword { Id = 1, Name = "food" };
+        k2 = new Keyword { Id = 2, Name = "drink" };
+        k3 = new Keyword { Id = 3, Name = "hotel" };
+        t1 = new Tag { Id = 1, Name = "bar"};
+        t2 = new Tag { Id = 2, Name = "move"};
+        t3 = new Tag { Id = 3, Name = "live"};
+    }
+    [Fact]
+    public void TestTagAdd()
+    {
+        var connection = new SqliteConnection("DataSource=:memory:");
+        Tag test;
+        connection.Open();
+        try
+        {
+            var options = new DbContextOptionsBuilder<EFContext>()
+                .UseSqlite(connection)
+                .Options;
+            using(var context = new EFContext(options))
+            {
+                context.Database.EnsureCreated();
+            }
+            using(var context = new EFContext(options))
+            {
+
+                context.Tags.Add(t1);
+                try
+                {
+                    context.SaveChanges();
+                }
+                catch (System.Exception)
+                {
+                    throw;
+                }
+            }
+            using(var context = new EFContext(options))
+            {
+                test = context.Tags.Where(k => k.Id == 1).FirstOrDefault();
+            }
+            Assert.Equal("bar", test.Name);
+            Assert.Equal(0, test.Version);
+        }
+        finally
+        {
+            connection.Close();
+        }
+
+    }
+
+}
 ```
+
+### CI / CD
+
+As this project is hosted in gitlab, thus the CI / CD could be enabled by add .gitlab-ci.yml
+
+```yml
+image: microsoft/dotnet:latest
+
+stages:
+  - test
+
+before_script:
+  - "dotnet restore"
+
+test:
+  stage: test
+  script:
+    - "dotnet test test/*"
+  only:
+    - master
+    - develop
+```
+
+### Conclusion
+
+In this journey, I spent most of my time in learning EF Core and C# Unit test. In the next journey, I will try to implement entities and repository.
+
+[source code](https://gitlab.com/jerry153fish/dot-net-job-seek/tree/9e4272d378c7894b49931ea4c7ebbe1666657d95)
+
+### Reference
+
+[^1]: Microsoft 2016, **Testing with SQLite**, https://docs.microsoft.com/en-us/ef/core/miscellaneous/testing/sqlite
