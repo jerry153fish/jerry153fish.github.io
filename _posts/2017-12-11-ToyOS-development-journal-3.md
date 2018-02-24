@@ -2,7 +2,7 @@
 layout: post
 title: ToyOS Development Journal - 3
 key: 20171211
-tags: c++ os journal interrupt idt 
+tags: C++ OS Journal Interrupt IDT 
 ---
 
 This is third part of ToyOS development journal. In the [second part](https://jerry153fish.github.io/2017/11/09/ToyOS-development-journal-2.html), we set up great descriptor table and load it to GDTR so that protect model is enabled. In this article, we are going to enable interrupts under protected model.
@@ -72,7 +72,7 @@ Thus, there are three sub-tasks we need to implement here
 * Initialize PIC
 * Snapshot and restore
 
-### Implementation
+### Implementation tl;dr
 
 Before interrupts coding, we need to wrap port reading and writing. 
 

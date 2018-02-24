@@ -2,7 +2,7 @@
 layout: post
 title: How to build a church website 
 key: 20171111
-tags: ffmpeg sh youtube church website
+tags: Ffmpeg Youtube Church Website Journal
 ---
 
 Recently, the elders in the church ask me to design a church website which need to fulfill requirements below:

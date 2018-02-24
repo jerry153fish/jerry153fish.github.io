@@ -2,7 +2,7 @@
 layout: post
 title: ToyOS Development Journal - 1
 key: 20171108
-tags: c++ os assemble GAS  development journal
+tags: C++ OS Assemble GAS Journal
 ---
 
 This development journal collects my study notes when I develop toyOS following [Viktor Engelmann's writting your own operation system tutorial series](https://www.youtube.com/watch?v=AgeX-U4dKSs&index=6&list=PLHh55M_Kq4OApWScZyPl5HhgsTJS9MZ6M). 

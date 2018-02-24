@@ -1,8 +1,8 @@
 ---
 layout: post
-title: Linux Program 
+title: Linux Program Notes 
 key: 20160314
-tags: linux file C I/O
+tags: Linux Program Note
 ---
 
 Applications under Linux / UNIX are represented by two special types of file: executables and scripts. Executable

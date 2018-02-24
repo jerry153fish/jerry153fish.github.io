@@ -2,7 +2,7 @@
 layout: post
 title: Free Hosting Methods
 key: 20170118
-tags: hosting website free
+tags: Hosting Website
 ---
 
 In this article, I am going to introduce three way to free hosting your simple website.

@@ -2,7 +2,7 @@
 layout: post
 title: Setup postgesql cluster and install Postgis 
 key: 20170118
-tags: hosting website free
+tags: Postgresql Database Postgis 
 ---
 
 Recently, I had upgrade ubuntu from 14.04 to 16.04. When I upgrade postgresql and try to set up postgis, I encountered a bug. This article record the process of solving it.

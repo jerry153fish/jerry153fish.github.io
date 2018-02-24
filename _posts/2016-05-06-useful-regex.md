@@ -2,7 +2,7 @@
 layout: post
 title: Useful Regex
 key: 20160506
-tags: regex
+tags: Regex
 ---
 
 ### Useful regex

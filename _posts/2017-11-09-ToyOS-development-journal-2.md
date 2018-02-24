@@ -2,7 +2,7 @@
 layout: post
 title: ToyOS Development Journal - 2
 key: 20171109
-tags: c++ os journal memory segment
+tags: C++ OS Journal Memory Segment
 ---
 
 This is second part of ToyOS development journal. In the [first part](https://jerry153fish.github.io/2017/11/08/ToyOS-development-journal-1.html), we successfully print "Hello World" in a naked i386 system. Now, let us move to memory management.
@@ -116,7 +116,7 @@ before we go to detailed solution, we need to define int types for future use.
 #endif
 ```
 
-### Solution
+### Solution tl;dr
 
 In our implementation, we are going to using c++ classes define segment descriptor and great descriptor table. 
 

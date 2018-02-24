@@ -1,8 +1,8 @@
 ---
 layout: post
-title: Shell Study Note 
+title: Shell Study Notes
 key: 20160408
-tags: shell linux bash
+tags: Shell Linux Bash
 ---
 
 Linux shell variables tutorial.
@@ -128,11 +128,11 @@ ${}
 |${param#word}|From the beginning, removes the smallest part of param that matches word and returns the rest.|
 |${param##word}|From the beginning, removes the longest part of param that matches word and returns the rest.|
 
-### eval
+#### eval
 
 evaluate arguments
 
-### set
+#### set
 
 sets the parameter variables for the shell.
 
@@ -143,11 +143,11 @@ $1:1 $2:2 ...
 
 ```
 
-### shift
+#### shift
 
 moves all the parameter variables down by one, so $2 becomes $1, $3 becomes $2, and so on.
 
-### trap
+#### trap
 
 The trap command is used for specifying the actions to take on receipt of signals
 
@@ -160,13 +160,14 @@ The trap command is used for specifying the actions to take on receipt of signal
 |ALRM (14)|Alarm; usually used for handling time−outs.|
 |TERM (15)|Terminate; usually sent by the system when it's shutting down.|
 
-### unset
+#### unset
 The unset command removes variables or functions from the environment.
 
-### here document
+#### here document
 starts with the leader <<, followed by a special sequence of characters that will be repeated at the end of the document
 
-### {} [] () in shell
+#### {} [] () in shell
+
 1. ${var}
 2. $(cmd) for command
 3. in a serial of commands，commands within \` will be execude firstly and the result will be used as input
@@ -179,6 +180,7 @@ starts with the leader <<, followed by a special sequence of characters that wil
  $ echo `ls`
  a b c
  ```
+
 - () execude command in new shell
 - {} execude command in current shell
 - () and {} both puts command and use ; to seperate
@@ -188,7 +190,7 @@ starts with the leader <<, followed by a special sequence of characters that wil
 - () not need space between command and ()
 - () and {} redirect in them only affect inside，but redirect outside affect all
 
-### replac
+#### replac
 
 #### ${var:-string},${var:+string},${var:=string},${var:?string}
 
@@ -251,18 +253,18 @@ a
 - ${var/pattern/place} if match the first pattern will be replaced
 - ${var//pattern/place} if match all the pattern will be replaced
 
-### $((exp)) 
+#### $((exp)) 
 
 POSIX Standard :$((exp))
 
 - any c operations can run inside，even ?:。note：not support float.if boolean operation，then true as 1, false as 0.
 
-### change the messages of login
+#### change the messages of login
 
 1. /etc/issue bash login welcome
 2. /etc/motd ssh login welcome
 
-### login and non-login
+#### login and non-login
 
 1. /etc/profile, /etc/profile.d/\*.sh login read
 2. ~/.bash_profile login read
@@ -274,12 +276,12 @@ POSIX Standard :$((exp))
 
 3. ~/.bashrc (non-login shell read)
 
-### terminals tty1~6
+#### terminals tty1~6
 
 ```
 stty -a
 ```
-### shell commands
+#### shell commands
 
 reidction output >
 
@@ -294,7 +296,7 @@ append >>
 kill −HUP 1234 > killout.txt 2>killerr.txt
 ```
 
-### >& operator to combine the two outputs.
+#### >& operator to combine the two outputs.
 
 ```
 $ kill −1 1234 > killouterr.txt 2>&1

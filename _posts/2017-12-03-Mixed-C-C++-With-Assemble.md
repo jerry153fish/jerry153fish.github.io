@@ -2,7 +2,7 @@
 layout: post
 title: Mixed C/C++ With Assemble
 key: 20171203
-tags: assemble c c++ gas
+tags: Assemble C C++ GAS
 ---
 
 Recently, I was learning how to write a simple operation system in c++. There are many codes which mixed c/c++ withe assembles, either call c/c++ from in assemble codes or jump to assemble code piece in c/c++. This article records my finding in how to switch codes between them.

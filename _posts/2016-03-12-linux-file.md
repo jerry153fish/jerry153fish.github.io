@@ -2,7 +2,7 @@
 layout: post
 title: Linux File
 key: 20160312
-tags: linux file C I/O
+tags: Linux File C I/O
 ---
 
 > Almost everything in Posix is handled through a file descriptor

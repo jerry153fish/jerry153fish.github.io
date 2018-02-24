@@ -2,7 +2,7 @@
 layout: post
 title: C# Study Note 2 - Entity Framework 
 key: 20180216
-tags: EF Entity-Framework-Core-2.0 .Net 
+tags: EF-Core-2.0 DotNet C# Note
 ---
 
 This is second part of DotNet study notes -- EF Core 2.0. 

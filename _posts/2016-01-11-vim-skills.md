@@ -2,7 +2,7 @@
 layout: post
 title: Useful Vim Skills
 key: 20160111
-tags: markdown
+tags: Vim Note
 ---
 
 Useful Vim Skill notes 

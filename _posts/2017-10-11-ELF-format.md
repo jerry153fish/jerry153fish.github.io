@@ -2,7 +2,7 @@
 layout: post
 title: ELF Format 
 key: 20171011
-tags: linux file elf executable
+tags: Linux File ELF Compiler
 ---
 
 ELF represents Executable and Linkable Format, which is a common standard file format for executable files, object code, shared libraries, and core dumps. It is a standard binary file format for *nix-like systems on x86 processors.

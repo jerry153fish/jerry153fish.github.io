@@ -2,7 +2,7 @@
 layout: post
 title: Job Seek Development Journal - 2
 key: 20180128
-tags: c# enity rabbitmq redis sharpnltk agile DDD
+tags: C# EF-Core Agile DDD Journal TDD
 ---
 
 Last week, I tried to fit this small job seek in DDD pattern. And this week, I am going to learn how to implement it.

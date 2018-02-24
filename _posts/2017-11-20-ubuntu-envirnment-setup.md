@@ -2,7 +2,7 @@
 layout: post
 title: Ubuntu Development Set Up
 key: 20171120
-tags: ubuntu i3 zsh vim bash linux
+tags: Ubuntu I3 ZSH Vim Bash Linux
 ---
 
 This article show how to setup a ubuntu development with i3, oh-my-zsh and spaceVim.

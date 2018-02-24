@@ -3,7 +3,7 @@ layout: post
 title: ES6 Variable - ES6 Study
 key:   20161011
 categories: website
-tags: es6 variable study note
+tags: ES6 Note
 comment: true
 ---
 

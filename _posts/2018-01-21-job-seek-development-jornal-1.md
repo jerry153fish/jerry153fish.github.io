@@ -2,7 +2,7 @@
 layout: post
 title: Job Seek Development Journal - 1
 key: 20180121
-tags: c# enity rabbitmq redis sharpnltk agile DDD
+tags: C# DotNet Design EF-Core DDD Journal
 ---
 
 Job seeker started when wherewot projects were about to finish. The first version of it was wrote in python. Now I want to refactor it with .net core stack due to ~~the job market trends in hobart~~ its simplicity and powerful features.
@@ -164,7 +164,7 @@ This is for crawling the employment websites in two steps, crawl the list pages 
     * value objects deep level tagging will be a cron job
 
 
-### table relation
+### table relation tl;dr
 
 As this is a small system, I will give the simple table models to indicate the whole relations among entities and value objects.
 

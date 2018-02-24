@@ -2,7 +2,7 @@
 layout: post
 title: Linux Log Files 
 key: 20160607
-tags: linux log
+tags: Linux Logs Note
 ---
 
 ### logs in linux

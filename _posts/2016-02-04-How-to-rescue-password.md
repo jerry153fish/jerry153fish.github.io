@@ -2,7 +2,7 @@
 layout: post
 title: How To Rescue Password 
 key: 20160204
-tags: linux password rhcsa
+tags: Linux Password Rhcsa Note
 comment: true
 ---
 

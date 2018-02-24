@@ -2,7 +2,7 @@
 layout: post
 title: Code Complete Study Note Part One
 key: 20160707
-tags: design concept code-complete architecture
+tags: Design Code-complete Architecture
 comment: true
 ---
 

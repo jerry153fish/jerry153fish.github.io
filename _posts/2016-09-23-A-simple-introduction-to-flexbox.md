@@ -1,9 +1,8 @@
 ---
 layout: post
 title:  Introduction to flexbox
-tags: flex layout css3
 key: 20160923
-tags: flexbox flex css3
+tags: Flex CSS3
 comment: true
 ---
 

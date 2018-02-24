@@ -2,7 +2,7 @@
 layout: post
 title: Postgresql query optimization practice
 key: 20170811
-tags: sql optimization postgresql
+tags: SQL Optimization Postgresql
 ---
 
 Recently, I was develop a RESTful API for all business data in Australia. There are some thoughts I'd like to mark down for notes.

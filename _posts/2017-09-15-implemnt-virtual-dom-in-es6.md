@@ -2,7 +2,7 @@
 layout: post
 title: Implement Virtual Dom In ES6
 key:   20170915
-tags: virtual dom ES6
+tags: virtual DOM ES6 Journal
 mathjax: true
 ---
 

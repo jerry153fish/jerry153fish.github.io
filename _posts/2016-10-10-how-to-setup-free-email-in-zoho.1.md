@@ -3,7 +3,7 @@ layout: post
 title:  How To Setup Free Email Host In Zoho
 key:   20161010
 categories: website
-tags: domain email free zoho
+tags: Domain Email Free Zoho
 comment: true
 ---
 

@@ -2,7 +2,7 @@
 layout: post
 title: Linux Reboot and Shutdown
 key: 20160202
-tags: linux rhcsa reboot shutdown
+tags: Linux Rhcsa Reboot Shutdown Bash Note
 comment: true
 ---
 
