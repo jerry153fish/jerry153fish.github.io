@@ -68,14 +68,14 @@ class Promise {
 	this.value = undefined
 	function resolve(value) {
 		if (this.status === STATUS.PENDING) {
-			this.status = STATUS.FULFILLED;
-			this.value = value;
+			this.status = STATUS.FULFILLED
+			this.value = value
 		}
 	}
 	function reject(error) {
 		if (this.status === STATUS.PENDING) {
-			this.status = STATUS.REJECTED;
-			this.value = error;
+			this.status = STATUS.REJECTED
+			this.value = error
 		}		
 	}
 	exec(resolve, reject)
@@ -91,10 +91,10 @@ The code above simple implement Promise / A++ 2.1[^1], however there are three i
 * exec could failed eg ``` new Promise((resolve, reject) => { throw 1}) ```
 
 ```js
-// use Symbol to encapsulate private members
 
+// use Symbol to encapsulate private members
 const _status = Symbol('status')
-const _value = Symbol('value)
+const _value = Symbol('value')
 
 class Promise {
   constructor (exec) {
@@ -104,14 +104,14 @@ class Promise {
 	self[_value] = undefined
 	function resolve(value) {
 		if (self[_status] === STATUS.PENDING) {
-			self[_status] = STATUS.FULFILLED;
-			self[_value] = value;
+			self[_status] = STATUS.FULFILLED
+			self[_value] = value
 		}
 	}
 	function reject(error) {
 		if (self[_status] === STATUS.PENDING) {
-			self[_status] = STATUS.REJECTED;
-			self[_status] = error;
+			self[_status] = STATUS.REJECTED
+			self[_status] = error
 		}		
 	}
 	try {
@@ -123,14 +123,20 @@ class Promise {
   }
 }
 ```
+
 ### Then method
 
+
 > A promise must provide a then method to access its current or eventual value or reason.
+
 > A promise’s then method accepts two arguments:
 > 	```promise.then(onFulfilled, onRejected)```
+
 > Both onFulfilled and onRejected are optional arguments:
 > * If onFulfilled is not a function, it must be ignored.
 > * If onRejected is not a function, it must be ignored.
+
+
 
 ```js
 
@@ -173,28 +179,32 @@ if (self[_status] === STATUS.PENDING) {
 }
 ```
 
+
 > 2.2.4 onFulfilled or onRejected must not be called until the **execution context stack** contains only platform code. [3.1].
+
 > 2.2.5 onFulfilled and onRejected must be called as functions (i.e. with no this value).
+
 > 3.1 Here “platform code” means engine, environment, and promise implementation code. In practice, this requirement ensures that onFulfilled and onRejected execute asynchronously, after the event loop turn in which then is called, and with a fresh stack. This can be implemented with either a “macro-task” mechanism such as setTimeout or setImmediate, or with a “micro-task” mechanism such as MutationObserver or process.nextTick. Since the promise implementation is considered platform code, it may itself contain a task-scheduling queue or “trampoline” in which the handlers are called.
-> 3.2 That is, in strict mode this will be undefined inside of them; in sloppy mode, it will be the global object
+
+> 3.2 That is, in strict mode this will be undefined inside of them in sloppy mode, it will be the global object
 
 ```js
 
-const nextTick = process && process.nextTick : process.nextTick ? setTimeout
+const nextTick = typeof process !== 'undefined' && process.nextTick ? process.nextTick : setTimeout
 
 	function resolve(value) {
 		nextTick (() => {
 			if (self[_status] === STATUS.PENDING) {
-				self[_status] = STATUS.FULFILLED;
-				self[_value] = value;
+				self[_status] = STATUS.FULFILLED
+				self[_value] = value
 			}
 		})
 	}
 	function reject(error) {
 		nextTick (() => {
 			if (self[_status] === STATUS.PENDING) {
-				self[_status] = STATUS.REJECTED;
-				self[_value] = error;
+				self[_status] = STATUS.REJECTED
+				self[_value] = error
 			}		
 		})
 	}
@@ -205,11 +215,11 @@ const nextTick = process && process.nextTick : process.nextTick ? setTimeout
 > *	If/when promise is fulfilled, all respective onFulfilled callbacks must execute in the order of their originating calls to then.
 > * If/when promise is rejected, all respective onRejected callbacks must execute in the order of their originating calls to then.
 
-OK, we have two new concepts here: onFulfiled callbacks and onRejects callbacks. 
+OK, we have two new concepts here: onFulfilled callbacks and onRejects callbacks. 
 
 ```js
 const _onFulfilledCallbacks = Symbol('onFulfilledCallbacks')
-const _onRejectedCallbacks= Symbol('onRejectedCallbacks)
+const _onRejectedCallbacks= Symbol('onRejectedCallbacks')
 class Promise {
   constructor (exec) {
 	// bind self to this
@@ -221,8 +231,8 @@ class Promise {
 	function resolve(value) {
 		nextTick (() => {
 			if (self[_status] === STATUS.PENDING) {
-				self[_status] = STATUS.FULFILLED;
-				self[_value] = value;
+				self[_status] = STATUS.FULFILLED
+				self[_value] = value
 				self[_onFulfilledCallbacks].map(cb => cb(value))
 			}
 		})
@@ -230,8 +240,8 @@ class Promise {
 	function reject(error) {
 		nextTick (() => {
 			if (self[_status] === STATUS.PENDING) {
-				self[_status] = STATUS.REJECTED;
-				self[_value] = error;
+				self[_status] = STATUS.REJECTED
+				self[_value] = error
 				self[_onRejectedCallbacks].map(cb => cb(error))
 			}	
 		})	
@@ -248,13 +258,13 @@ class Promise {
 
 > 2.2.7 then must return a promise
 >	```promise2 = promise1.then(onFulfilled, onRejected)```
-> * 2.2.7.1 If either onFulfilled or onRejected returns a value x, run the Promise Resolution Procedure [[Resolve]](promise2, x).
+> * 2.2.7.1 If either onFulfilled or onRejected returns a value x, run the Promise Resolution Procedure `[[Resolve]](promise2, x)`.
 > * 2.2.7.2 If either onFulfilled or onRejected throws an exception e, promise2 must be rejected with e as the reason.
 > * 2.2.7.3 If onFulfilled is not a function and promise1 is fulfilled, promise2 must be fulfilled with the same value as promise1.
 > * 2.2.7.4 If onRejected is not a function and promise1 is rejected, promise2 must be rejected with the same reason as promise1.
 
-This is the most tricky part in promise implementation, let us define a resolver for [[Resolve]](promise2, x
-)
+This is the most tricky part in promise implementation, let us define a resolver for `[[Resolve]](promise2, x
+)`
 
 let us code it step by step
 
@@ -295,12 +305,12 @@ then(onFulfilled, onRejected) {
 Add resolve constrain for [[Resolve]](promise2, x) 
 
 ```js
-resolver (promise2, x) {
-
-}
 
 then(onFulfilled, onRejected) {
 // ...
+	function resolver (promise2, x) {
+
+	}
 
 	if (self[_status] === STATUS.FULFILLED) {
 		return promise2 = new Promise((resolve, reject) => {
@@ -362,7 +372,7 @@ In other words, eg
 ```js
 // should console 'aa'
 promise1
-.then(resolve('aa))
+.then(resolve('aa'))
 .then()
 .then()
 .then((v) => console.log(v) )
@@ -411,7 +421,7 @@ We need also pass resolve and reject methods of promise2 as parameters
 
 ```js
 
-resolver (promise2, x, resolve, reject) {
+function resolver (promise2, x, resolve, reject) {
 	if (promise2 === x) {
 		return reject(new TypeError('Same promise objects'))
 	}
@@ -425,16 +435,16 @@ resolver (promise2, x, resolve, reject) {
 
 ```js
 
-resolver (promise2, x, resolve, reject) {
+function resolver (promise2, x, resolve, reject) {
 	if (promise2 === x) {
 		return reject(new TypeError('Same promise objects'))
 	}
 
-	if (result instanceof Promise) {
-		if (result[_status] === STATUS.PENDING) {
-			result.then(v => resolver(promise, v, resolve, reject), reject)
+	if (x instanceof Promise) {
+		if (x[_status] === STATUS.PENDING) {
+			x.then(v => resolver(promise, v, resolve, reject), reject)
 		} else {
-			result.then(resolve, reject)
+			x.then(resolve, reject)
 		}
 	}
 }
@@ -443,7 +453,9 @@ resolver (promise2, x, resolve, reject) {
 > 2.3.3 Otherwise, if x is an object or function
 > * 2.3.3.1 Let then be x.then. [3.5]
 > 3.5 This procedure of first storing a reference to x.then, then testing that reference, and then calling that reference, avoids multiple accesses to the x.then property. Such precautions are important for ensuring consistency in the face of an accessor property, whose value could change between retrievals.
+
 > * 2.3.3.2 If retrieving the property x.then results in a thrown exception e, reject promise with e as the reason.
+
 > * 2.3.3.3 If then is a function, call it with x as this, first argument resolvePromise, and second argument rejectPromise, where:
 > 	*	2.3.3.3.1 If/when resolvePromise is called with a value y, run [[Resolve]](promise, y).
 > 	*	2.3.3.3.2 If/when rejectPromise is called with a reason r, reject promise with r.
@@ -451,12 +463,14 @@ resolver (promise2, x, resolve, reject) {
 >	*	2.3.3.3.4 If calling then throws an exception e,
 >		* 	2.3.3.3.4.1 If resolvePromise or rejectPromise have been called, ignore it.
 >		* 	2.3.3.3.4.2 Otherwise, reject promise with e as the reason.
+
 > * 2.3.3.4 If then is not a function, fulfill promise with x.
+
 > 2.3.4 If x is not an object or function, fulfill promise with x.
 
 ```js
 
-resolver (promise2, x, resolve, reject) {
+function resolver (promise2, x, resolve, reject) {
 	let then, thenCalledOrThrow = false 
 	if (promise2 === x) {
 		return reject(new TypeError('Same promise objects'))
@@ -475,20 +489,20 @@ resolver (promise2, x, resolve, reject) {
 			then = x.then // 2.3.3.1
 			if (typeof (then) === 'function') { // 2.3.3.3
 				then.call(x, s => { // 2.3.3.3.1
-					if (thenCalledOrThrow) return;
-					thenCalledOrThrow = true;
-					return resolver(promise, s, resolve, reject);
+					if (thenCalledOrThrow) return
+					thenCalledOrThrow = true
+					return resolver(promise, s, resolve, reject)
 				}, r => { // 2.3.3.3.2
-					if (thenCalledOrThrow) return;
-					thenCalledOrThrow = true;
+					if (thenCalledOrThrow) return
+					thenCalledOrThrow = true
 					return reject(r)
-				});
+				})
 			} else { // 2.3.3.4
 				return resolve(x)
 			}
 		} catch (e) { // 2.3.3.2
-			if (thenCalledOrThrow) return;
-			thenCalledOrThrow = true;
+			if (thenCalledOrThrow) return
+			thenCalledOrThrow = true
 			return reject(e)
 		}
 	} else {
@@ -497,10 +511,25 @@ resolver (promise2, x, resolve, reject) {
 }
 ```
 
-### Conclusion
+### Test
 
-The Promise/A++ standard is so delegated, implementation turns out to be enjoyable journey. 
+It is better to use the [official Test Suite](https://github.com/promises-aplus/promises-tests) for testing. This is because the implementation might be ok in your test cases but it failed 200+ test cases for the official one.
 
+The only thing needed here is to expose a adapter of Promise
+
+```js
+class Promise {
+	//...
+    static deferred() {
+        let dfd = {}
+        dfd.promise = new Promise((resolve, reject) => {
+            dfd.resolve = resolve
+            dfd.reject = reject
+        })
+        return dfd
+	}
+}
+``
 
 
 ### Reference

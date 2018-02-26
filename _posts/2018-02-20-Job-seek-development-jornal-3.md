@@ -45,5 +45,7 @@ public interface IBus
 { }
 ```
 
-### User Management Bounded Context
+### User search Bounded Context
+
+
 
