@@ -100,9 +100,9 @@ public class UserMapper : IEntityTypeConfiguration<User>
     {
         builder.HasKey(c => c.Id);
         // profile not null
-        // builder.HasRequired(p => p.Profile).WithMany().HasForeignKey(p => p.ProfileId);
+        // builder.HasOne(p => p.Profile).WithMany().HasForeignKey(p => p.ProfileId);
         // profile could be null
-        builder.HasRequired(p => p.Profile).WithMany().HasForeignKey(p => p.ProfileId);
+        builder.HasOne(p => p.Profile).WithMany().HasForeignKey(p => p.ProfileId);
     }
 }
 
@@ -154,7 +154,7 @@ public class ProjectMapper : IEntityTypeConfiguration<Project>
     {
         builder.HasKey(c => c.Id);
 
-        builder.HasRequired(p => p.Profile).WithMany(p => p.Projects).HasForeignKey(p => p.ProfileId);
+        builder.HasOne(p => p.Profile).WithMany(p => p.Projects).HasForeignKey(p => p.ProfileId);
     }
 }
 
@@ -170,7 +170,7 @@ public class Tag
 {
     public int Id { get; set; }
     public string Name { get; set; }
-    public ICollection<TagKeyword> TagKeywords { get; } = new List<TagKeyword>();
+    public ICollection<TagKeyword> TagKeywords { get; set; }
 }
 
 // keyword
@@ -179,7 +179,7 @@ public class Keyword
 {
     public int Id { get; set; }
     public string Name { get; set; }
-    public ICollection<TagKeyword> TagKeywords { get; } = new List<TagKeyword>(); 
+    public ICollection<TagKeyword> TagKeywords { get; set; }
 }
 
 // TagKeyword
@@ -205,6 +205,34 @@ public class TagKeywordMapper : IEntityTypeConfiguration<TagKeyword>
 }
 
 ```
+
+### Self-reference 
+
+1. One to many / parent - children 
+
+```cs
+public class Category
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public int ParentId { get; set; }
+    public Category Parent { get; set; }
+    public ICollection<Category> Children { get; set; }
+}
+
+public class CategoryMapper : IEntityTypeConfiguration<Category>
+{
+    public void Configure(EntityTypeBuilder<Category> builder)
+    {
+        builder.HasOne(tk => tk.Parent).WithMany(t => t.Children).HasForeignKey(tk => tk.ParentId);
+    }
+}
+
+```
+
+2. Many to many
+
+
 
 ### Inheritance
 
@@ -257,6 +285,9 @@ HasColumnOrder()	| Configures the order of the database column used to store the
 HasColumnType()	| Configures the data type of the corresponding column in the database for the property.
 HasColumnName()	| Configures the corresponding column name in the database for the property.
 IsConcurrencyToken()	| Configures the property to be used as an optimistic concurrency token.
+
+
+**Ps**: The above are the cheat sheet for EF, there are several mutation for EF Core eg: HasOne
 
 ### Reference
 

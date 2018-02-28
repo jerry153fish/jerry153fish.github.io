@@ -4,25 +4,28 @@ title: About
 key: page-about
 ---
 
-### About Me
+I am Jerry Chen. I am a lifelong programmer firstly as hardware programmer for 6 years now as a full stack programmer for three years. I live in Tasmania the most beautiful island in the world.
+
+Since my first c 'Hello World' in hight school, I have use C/C++/Assemble, Python, JS, Java/C#, SQL. I like hacking things for fun in my workshop including apps, electronic devices, knifes, wood / store handcrafts, paintings, toys and so on. I really enjoy the moment when a problem been solved or a piece of work formed in my hand.
+
+I wrote this blog to record my thoughts, study notes, development journals and tutorials for myself and others
+
 
 ----
 
-name | email | phone | address | notes 
---- | --- | --- | --- | ---
-Jerry Chen | jerry153fish@gmail.com | 0435 826 586 | Hobart Tasmania 7171, AU | keen / happy learner
 
-### Experience
-----
 
-position | time frame | company | description | achievements
+<!-- ### Experience
+---- -->
+
+<!-- position | time frame | company | description | achievements
 --- | --- | --- | --- | ---
 Full Stack Developer | April 2015 - now | Wherewot | developing and maintaining apps of back-ends and front-ends,  mentoring | [wherewot](wherewot.com) / [buscodes](buscodes.com) / [fetchodes](fetchcodes.com) / [nutrientbase](nutrientbase.com) / DatajetAPI / WherewotAdmin(electron)
 Project Manager | Jan 2008 - May 2011 | Ningxia Global Valve Co,.Ltd | developing systems, technique supporting | traveling half of China, two small controlling system for pipe system
-Electronic Engineer | July 2006 - Dec 2007 | Heling Electronic Co,.Ltd | MCU programming, PCB Design | Company level prizes, student -> professional journey
+Electronic Engineer | July 2006 - Dec 2007 | Heling Electronic Co,.Ltd | MCU programming, PCB Design | Company level prizes, student -> professional journey -->
 
 
-### Skills
+<!-- ### Skills
 ----
 
 skill | experience | notes | projects
@@ -35,7 +38,7 @@ python | 6 yr+ | life is short | [Job seek python version](https://gitlab.com/je
 SQL | 10 yr+ | small table join big table | all wherewot projects
 NoSQL | 3 yr+ | dynamodb / mongodb / redis | all wherewot projects
 HTML5 / CSS / SASS | 10 yr+ | average + in backend programmers  | [Midway Point Christian Fellowship](www.mpcf.com.au)
-*nix| 6 yr+ | Ubuntu -> OpenSUSE -> Arch Linux -> Ubuntu + i3 -> Mac
+*nix| 6 yr+ | Ubuntu -> OpenSUSE -> Arch Linux -> Ubuntu + i3 -> Mac -->
 
 
 
