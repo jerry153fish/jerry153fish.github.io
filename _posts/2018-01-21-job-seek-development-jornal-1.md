@@ -5,7 +5,7 @@ key: 20180121
 tags: C# DotNet Design EF-Core DDD Journal
 ---
 
-Job seeker started when wherewot projects were about to finish. The first version of it was wrote in python. Now I want to refactor it with .net core stack due to ~~the job market trends in hobart~~ its simplicity and powerful features.
+Job seeker started when wherewot projects were about to finish. The first version of it was wrote in python. Now I want to refactor it with .net core stack due to its simplicity and powerful features.
 
 The purposes of this toy project is very simple,
 
@@ -15,6 +15,8 @@ The purposes of this toy project is very simple,
 
 
 The python version I wrote before is only for personal usage, I was always told 'dream bigger'. So this version, I am going to extends its scalability by turning into a C / S cloud application.
+
+tl;dr -- initial design contains many mistakes
 
 ### Feasibility and possible technique sets 
 
@@ -192,7 +194,7 @@ The reasons I choose DDD and CQRS are some problems raised when I developed simp
 
 For scrapy, I separated the list crawling and detailed crawling and use job pools for communication. As for tagging, I pre-tagging my own profile and used simple bag of keywords for job tagging. Moreover, cached every steps.
 
-If it became a C / S | B / S app, the concept will be same, but there would be some major difference:
+If it became a C / S or B / S app, the concept will be same, but there would be some major difference:
 
 * Message broker for communication 
 * scrapy for job list is personal and detailed job crawling should shared among users.

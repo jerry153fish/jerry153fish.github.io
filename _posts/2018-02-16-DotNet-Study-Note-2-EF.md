@@ -17,7 +17,7 @@ As ORM framework, EF has three design approaches:
 
 I had spent most of my time in code first for the last two weeks. Here are the key notes of my study journey.
 
-### Corner stone
+### Cornerstones
 
 * DbContext which is container in the memory of all entities and states
     * communication to database
@@ -232,6 +232,37 @@ public class CategoryMapper : IEntityTypeConfiguration<Category>
 
 2. Many to many
 
+```cs
+
+public class Keyword
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+    [NotMapped]
+    public int Weight { get; set; }
+
+    public virtual ICollection<KeywordNeighbors> Lefts { get; set; }
+    public virtual ICollection<KeywordNeighbors> Rights { get; set; }
+
+}
+
+
+public class KeywordNeighborsMapper : IEntityTypeConfiguration<KeywordNeighbors>
+{
+    public void Configure(EntityTypeBuilder<KeywordNeighbors> builder)
+    {
+        builder.HasKey(t => new { t.LeftId, t.RightId });
+
+        builder.HasOne(tk => tk.Left).WithMany(t => t.Lefts).HasForeignKey(tk => tk.LeftId);
+        builder.HasOne(tk => tk.Right).WithMany(k => k.Rights).HasForeignKey(tk => tk.RightId);
+
+        builder.HasIndex(t => t.Weight);
+        builder.Property(t => t.Weight).HasDefaultValue(99);
+    }
+}
+```
+
+Ps: This form **a graph**.
 
 
 ### Inheritance
@@ -291,5 +322,5 @@ IsConcurrencyToken()	| Configures the property to be used as an optimistic concu
 
 ### Reference
 
-[^1]: Entity Framework Tutorial 2018, **Entity Framework Tutorial**, https://msdn.microsoft.com/en-us/library/jj554200.aspx
+[^1]: Entity Framework Tutorial 2018, **Entity Framework Tutorial**, http://www.entityframeworktutorial.net/ 
 [^2]: Inheritance with EF Code First 2018, **Enterprise .Net**, https://weblogs.asp.net/manavi

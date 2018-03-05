@@ -7,4 +7,4 @@ tags: C# DotNet Note
 
 This is first part of DotNet study notes -- quick review for C# language.
 
-<a class="fabox" href="/assets/img/csharp/Csharp-review.png"><img src="/assets/img/csharp/Csharp-review.png" alt=""/></a>
+<a class="fabox" href="/assets/img/csharp/Csharp-review.png" target="_blank"><img src="/assets/img/csharp/Csharp-review.png" alt=""/></a>
