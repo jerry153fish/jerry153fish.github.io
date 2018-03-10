@@ -17,7 +17,7 @@ As ORM framework, EF has three design approaches:
 
 I had spent most of my time in code first for the last two weeks. Here are the key notes of my study journey.
 
-### Cornerstones
+### Cornerstone
 
 * DbContext which is container in the memory of all entities and states
     * communication to database
@@ -25,7 +25,6 @@ I had spent most of my time in code first for the last two weeks. Here are the k
     * tracing states of entities
 
 * DbSet Entities inside DbContext
-
 
 ### Connecting to database
 
@@ -122,7 +121,7 @@ public class Profile
 
 // profile mapper
 
-public class UserMapper : IEntityTypeConfiguration<Profile>
+public class ProfileMapper : IEntityTypeConfiguration<Profile>
 {
     public void Configure(EntityTypeBuilder<Profile> builder)
     {

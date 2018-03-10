@@ -241,7 +241,6 @@ public class EFContext : DbContext
         // set default connection string
         if(!optionsBuilder.IsConfigured)
         {
-            // optionsBuilder.UseSqlite(@"DataSource=../../mydb.db");
             optionsBuilder.UseNpgsql("Username=postgres;Password=hellopassword;Host=localhost;Port=5432;Database=jobseek;Pooling=true;", providerOptions=>providerOptions.CommandTimeout(60))
             .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
         }
