@@ -123,6 +123,28 @@ Many numerical data types derive from a class named System.ValueType. Descendant
 
 ![data type hierarchy](/assets/img/csharp/datatypehierarchy.png)[^1]
 
+### System String
+
+> String = operation has been written to value comparing
+
+```cs
+
+string t1 = "aa";
+
+t1 == "aa"; // true
+
+```
+
+> StringComparison enumeration
+
+C# Equality/Relational Operator | Meaning in Life
+---|---
+CurrentCulture | Compares strings using culture-sensitive sort rules and the current culture
+CurrentCultureIgnoreCase | Compares strings using culture-sensitive sort rules and the current culture and ignores the case of the strings being compared
+InvariantCulture | Compares strings using culture-sensitive sort rules and the invariant culture
+InvariantCultureIgnoreCase | Compares strings using culture-sensitive sort rules and the invariant culture and ignores the case of the strings being compared
+Ordinal | Compares strings using ordinal (binary) sort rules
+OrdinalIgnoreCare | Compares strings using ordinal (binary) sort rules and ignores the case of the strings being compared
 
 
 
