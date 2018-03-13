@@ -147,6 +147,153 @@ Ordinal | Compares strings using ordinal (binary) sort rules
 OrdinalIgnoreCare | Compares strings using ordinal (binary) sort rules and ignores the case of the strings being compared
 
 
+### Var
+
+Var is not a C# keyword. it is permissible to declare variables, parameters, and fields named var without compile-time errors. however, when the var token is used as a data type, it is contextually treated as a keyword by the compiler. It is a strongly typed data type.
+
+- var cannot be used as field data!
+
+```cs
+class Aa 
+{
+    private var test = 0; //error
+}
+```
+
+- var cannot be used as a return value or parameter type!
+
+```cs
+// error
+var good(var pa)
+{
+
+}
+```
+
+-  must be assigned an initial value at the exact time of declaration and cannot be assigned the initial value of null
+
+```cs
+
+var a; // error
+// error
+var b;
+b = 3;
+// error
+var c = null
+// ok
+var persona = new Person();
+person = null;
+```
+
+- strongly typed data
+
+```cs
+
+var a = 3;
+a = "aa"; // error
+```
+
+- go well with linq
+
+### Function modifier
+
+- parameter modifiers
+
+Parameter Modifier | Meaning in Life
+---|---
+(None) | If a parameter is not marked with a parameter modifier, it is assumed to be passed by value, meaning the called method receives a copy of the original data.
+out  | Output parameters must be assigned by the method being called and, therefore, are passed by reference. If the called method fails to assign output parameters, you are issued a compiler error.
+ref  | The value is initially assigned by the caller and may be optionally modified by the called method (as the data is also passed by reference). No compiler error is generated if the called method fails to assign a ref parameter.
+params | This parameter modifier allows you to send in a variable number of arguments as a single logical parameter. A method can have only a single params modifier, and it must be the final parameter of the method. In reality, you might not need to use the params modifier all too often; however, be aware that numerous methods within the base class libraries do make use of this C# language feature.
+
+
+### Enum
+
+A data type of name-value pairs and the storage type used to hold the values of an enumeration is a System.Int32 (the C# int).
+
+C# enumerations can be defined in a similar manner for any of the core system types (byte, short, int, or long). 
+
+```cs
+// 0 - 255
+enum EmpType : byte
+{
+  Manager = 10,
+  Grunt = 1,
+  Contractor = 100,
+  VicePresident = 9
+}
+```
+
+### System.ValueType
+
+Ensure that the derived type (e.g., any structure) is allocated on the stack, rather than the garbage-collected heap. Functionally, the only purpose of System.ValueType is to override the virtual methods defined by System.Object to use value-based versus reference-based semantics. 
+
+```cs
+
+struct Person
+{
+    int age;
+}
+
+Person p1 = new Person();
+p1.age = 3;
+Person p2;
+p2 = p1; // value copy
+p2.age = 5; // p1.age = 3
+```
+
+
+Intriguing Question | Value Type | Reference Type
+---| --- | ---
+Where are objects allocated?  | Allocated on the stack. | Allocated on the managed heap.
+How is a variable represented? | Value type variables are local copies. | Reference type variables are pointing to the memory occupied by the allocated instance.
+What is the base type? | Implicitly extends System. ValueType. | Can derive from any other type (except System.ValueType), as long as that type is not “sealed” 
+Can this type function as a base to other types? | No. Value types are always sealed and cannot be inherited from. |Yes. If the type is not sealed, it may function as a base to other types.
+What is the default parameter passing behavior? | Variables are passed by value (i.e., a copy of the variable is passed into the called function). | For reference types, the reference is copied by value.
+Can this type override System. Object.Finalize()? | No | Yes, indirectly
+Can I define constructors for this type? | Yes, but the default constructor is reserved (i.e., your custom constructors must all have arguments). | Yes
+When do variables of this type die? | When they fall out of the defining scope. | When the object is garbage collected.
+
+### Nullable types
+
+To define a nullable variable type, the question mark symbol (?) is suffixed to the underlying data type. 
+
+```cs
+int? a = 3; // null is ok
+bool? test = true; // null is ok
+```
+
+the ? suffix notation is a shorthand for creating an instance of the generic System.Nullable<T> structure type.
+
+```cs
+
+bool? test = null; // Nullable<bool> test = null;
+```
+
+- The Null Coalescing Operator
+
+```cs
+int? a = getSomeIntValue() ?? 100;
+```
+
+### Tuples
+
+Lightweight data structures that contain multiple fields. In C# 7, tuples use the new ValueTuple data type instead of reference types.
+
+```cs
+// the property names are Item1, Item2, and Item3
+(1, "hello", 1.22)
+
+// the property names are FirstLetter, TheNumber, and SecondLetter
+(string FirstLetter, int TheNumber, string SecondLetter) valuesWithNames = ("a", 5, "c");
+```
+
+### class
+
+A class is a user-defined type that is composed of field data (often called member variables)
+and members that operate on this data (such as constructors, properties, methods, events, and so forth). Collectively, the set of field data represents the “state” of a class instance (otherwise known as an object)
+
+
 
 <a class="fabox" href="/assets/img/csharp/Csharp-review.png" target="_blank"><img src="/assets/img/csharp/Csharp-review.png" alt=""/></a>
 
