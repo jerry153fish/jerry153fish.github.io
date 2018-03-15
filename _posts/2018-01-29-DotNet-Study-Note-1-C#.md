@@ -288,16 +288,9 @@ Lightweight data structures that contain multiple fields. In C# 7, tuples use th
 (string FirstLetter, int TheNumber, string SecondLetter) valuesWithNames = ("a", 5, "c");
 ```
 
-### class
-
-A class is a user-defined type that is composed of field data (often called member variables)
-and members that operate on this data (such as constructors, properties, methods, events, and so forth). Collectively, the set of field data represents the “state” of a class instance (otherwise known as an object)
-
-
-
 <a class="fabox" href="/assets/img/csharp/Csharp-review.png" target="_blank"><img src="/assets/img/csharp/Csharp-review.png" alt=""/></a>
 
-
+ 
 ### Reference
 
 [^1]: Christian N 2018, **Professional C# 7 and . NET Core 2. 0**, https://www.amazon.com/Pro-NET-Core-Andrew-Troelsen/dp/1484230175
