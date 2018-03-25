@@ -6,10 +6,9 @@ key: page-about
 
 I am Jerry Chen. I am a lifelong programmer firstly as hardware programmer for 6 years now as a full stack programmer for three years. I live in Tasmania the most beautiful island in the world.
 
-Since my first c 'Hello World' in hight school, I have use C/C++/Assemble, Python, JS, Java/C#, SQL. I like hacking things for fun in my workshop including apps, electronic devices, knifes, wood / store handcrafts, paintings, toys and so on. I really enjoy the moment when a problem been solved or a piece of work formed in my hand.
+Since my first c 'Hello World' in hight school, I have use C/C++/Assemble, Python, JS, Java/C#, SQL. I like hacking things for fun in my workshop including apps, electronic devices, knifes, wood / store handcrafts, paintings, toys and so on.  
 
-I wrote this blog to record my thoughts, study notes, development journals and tutorials for myself and others
-
+I code because I like it.
 
 ----
 

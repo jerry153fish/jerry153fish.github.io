@@ -25,11 +25,11 @@ class Person
     public string Name;
 
     public Person()
-    : this(10, 'jerry')
+    : this(10, "jerry")
     {}
 
     public Person(int age)
-    : this(age, 'jerry')
+    : this(age, "jerry")
     {}
 
     public Person(string name)
@@ -63,7 +63,9 @@ protected | Type members or nested types | Protected items can be used by the cl
 internal | Types or type members | Internal items are accessible only within the current assembly. Therefore, if you define a set of internal types within a .NET class library, other assemblies are not able to use them.
 protected internal | Type members or nested types | When the protected and internal keywords are combined on an item, the item is accessible within the defining assembly, within the defining class, and by derived classes.
 
+
 > Default Access Modifiers: type members are implicitly private while types are implicitly internal. 
+
 
 ```cs
 // same codes
@@ -87,6 +89,7 @@ internal class Person
 
 ValueType: the hidden backing fields will be assigned a safe default value, reference type: NULL
 
+
 ```cs
 
 class Person
@@ -99,7 +102,9 @@ class Person
 }
 ```
 
+
 - object initializer syntax
+
 
 ```cs
 
@@ -114,6 +119,7 @@ diff:
 
 const | read-only
 must be known at compile time and implicitly static | can be determined at runtime and not implicitly static
+
 
 ```cs
 class Person
@@ -183,7 +189,10 @@ t1 is Teacher t2; // if is assign to t2
 t1 is Student t2; // if not return false
 
 ```
+
+
 > System.Object
+
 
 In the .NET universe, every type ultimately derives from a base class named System.Object, which can be represented by the C# object keyword.
 
@@ -196,7 +205,9 @@ ToString() | This method returns a string representation of this object, using t
 GetType() | This method returns a Type object that fully describes the object you are currently referencing. In short, this is a Runtime Type Identification (RTTI) method available to all objects.
 MemberwiseClone() | This method exists to return a member-by-member copy of the current object, which is often used when cloning an object.
 
+
 > System.Exception
+
 
 ```cs
 public class Exception : ISerializable, _Exception
