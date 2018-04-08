@@ -93,8 +93,31 @@ public doSomething(int num)
     }
 }
 
-
 ```
+
+#### DRY
+
+
+### Comments
+
+> Code explains itself
+
+- necessary comments
+    - legal comments
+    - information comments
+    - explanation of intent
+    - clarification
+    - warning of consequence
+    - todos
+    - amplification
+    - javadocs for api
+
+### Formatting
+
+- in terms of team standard
+
+### Objects and data structures
+
 
 
 
