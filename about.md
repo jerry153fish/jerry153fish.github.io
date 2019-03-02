@@ -4,11 +4,10 @@ title: About
 key: page-about
 ---
 
-I am Jerry Chen. I am a lifelong programmer firstly as hardware programmer for 6 years now as a full stack programmer for three years. I live in Tasmania the most beautiful island in the world.
+Hi there!. My name is Jerry Chen and I am a programmer. My first program was c 'Hello World' in high school in 1999. Then I studied Electronic Information Engineering for my bachelor degree and became an electronic engineer for fours years. After gain the master degree of Information Technology in Australia, I have been a software developer.
 
-Since my first c 'Hello World' in hight school, I have use C/C++/Assemble, Python, JS, Java/C#, SQL. I like hacking things for fun in my workshop including apps, electronic devices, knifes, wood / store handcrafts, paintings, toys and so on.  
+I code because I like it. Thus, I have used many different languages during working and my hobby projects. Besides programming, I like hacking things for fun in my workshop including apps, electronic devices, knifes, wood / store handcrafts, paintings, toys and so on.  
 
-I code because I like it.
 
 ----
 
