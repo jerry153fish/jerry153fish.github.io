@@ -191,6 +191,13 @@ eg:
 
 #### Job / CronJob
 
+CronJob -> run a Job in certain time
+
+*CronJob spec*
+1. `spec.scheduler` - same as Cron min hour day month weekday 
+2. `spec.jobTemplate` - Job template
+
+
 #### StateFulSet
 1. persistent storage
 2. persistent network identifiers
@@ -201,3 +208,59 @@ eg:
 #### Horizontal Pod Autoscaling
 
    
+### Services
+
+1. With **Label selector**, match a group of pods to provide outside access.
+2. Only support 4 layers ( IP and port )of loadbalance not 7 layers, but with ingress can support 7 layers
+
+#### Types
+1. ClusterIP (default): assign cluster internal ip ( restrict access within cluster ) to service
+2. NodePort: Bind a node port above Cluster IP to service for each node, port number > 30000
+3. LoadBalance: use cloud-provider add a loadbalance to NodePort( NodeIP:NodePort ), so it can be accessed outside cluster
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+    name: nginx-svc
+spec:
+    type: LoadBalancer
+    selector:
+        app: nginx
+    ports:
+        - name: http
+          port: 8081
+          targetPort: 80
+    externalIPs:
+        - 192.168.99.102 # minikube IP, usually cloud provider
+```
+
+4. ExternalName: import out-cluster service into cluster, so it can be access
+
+#### Kube-proxy and VIP
+
+Each node has kube-proxy running inside and will provide a virtual ip for each service. 1.1 `iptables` -> 1.14 `ipvs`
+
+*ipvs*
+1. kube-proxy will regularly monitor `services` and `endpoints` then call `netlink` to create  or update ipvs rules.
+2. ipvs can provide multiple loadbalance algorithm
+   1. rr - round robin
+   2. lc - least connection
+   3. dh - destination hash
+   4. sh - source hash
+   5. sed - least delay
+   6. nq - not queued
+3. if install IPVS module will fallback to iptables
+
+### Ingress
+
+ingress -> nodePort
+
+[https://kubernetes.github.io/ingress-nginx/](https://kubernetes.github.io/ingress-nginx/)
+
+### configMap
+
+```sh
+kubectl create configmap nameOfconfigMap --from-file=PathToFile
+```
+
